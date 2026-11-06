@@ -1,0 +1,17 @@
+node_modules/
+vendor/
+config/config.php
+var/
+
+# Générés par npm run build (et par le déploiement)
+public/assets/css/
+public/assets/js/
+public/assets/vendor/
+public/assets/img/leo-renard-*
+public/assets/img/og-image.jpg
+public/assets/img/logo.svg
+public/favicon.svg
+
+# Générés par PHP au premier appel
+public/robots.txt
+public/sitemap.xml

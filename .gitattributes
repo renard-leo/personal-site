@@ -1,0 +1,2 @@
+# Fins de ligne LF partout, même sous Windows : le hook .githooks/post-merge ne s'exécute pas sur le serveur avec des CRLF.
+* text=auto eol=lf

@@ -1,0 +1,12 @@
+@use "../s4_mixin" as *;
+
+// Transitions entre pages (navigation classique) et changement de thème.
+@include motion {
+    @view-transition {navigation: auto}
+    ::view-transition-old(root), ::view-transition-new(root) {animation-duration: var(--dur-base)}
+}
+
+.is-theme-transition {
+    .site-header {view-transition-name: none}
+    &::view-transition-old(root), &::view-transition-new(root) {animation: none; mix-blend-mode: normal}
+}

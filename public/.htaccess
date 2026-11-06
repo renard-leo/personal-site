@@ -1,0 +1,50 @@
+Options -Indexes -MultiViews
+DirectoryIndex index.php
+AddDefaultCharset UTF-8
+AddType image/avif .avif
+AddType image/svg+xml .svg
+AddType text/javascript .js .mjs
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # /page.php -> /page (sauf les points d'entrée appelés en POST, comme contact.php)
+    RewriteCond %{REQUEST_METHOD} =GET
+    RewriteCond %{THE_REQUEST} \s(/[^?\s]*?)index\.php[?\s]
+    RewriteRule ^ %1 [R=301,L]
+    RewriteCond %{REQUEST_METHOD} =GET
+    RewriteCond %{THE_REQUEST} \s(/(?:[^?\s]*/)?)((?!contact\.php)[^/?\s]+)\.php[?\s]
+    RewriteRule ^ %1%2 [R=301,L]
+
+    # /page -> page.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^(.+?)/?$ $1.php [L]
+</IfModule>
+
+<IfModule mod_deflate.c>
+    <IfModule mod_filter.c>
+        AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml
+    </IfModule>
+</IfModule>
+
+# Les en-têtes de sécurité des pages (CSP, HSTS…) sont envoyés par PHP (src/security.php) ; ici, seulement les fichiers statiques.
+<IfModule mod_headers.c>
+    <FilesMatch "\.(css|js|mjs|svg|avif|webp|jpe?g|png|ico|woff2|pdf|txt|xml)$">
+        Header set X-Content-Type-Options "nosniff"
+    </FilesMatch>
+
+    # CV : téléchargeable depuis le site, mais absent des résultats des moteurs de recherche (coordonnées personnelles).
+    <FilesMatch "\.pdf$">
+        Header set X-Robots-Tag "noindex"
+    </FilesMatch>
+
+    # Fichiers versionnés par ?v= (fonction asset()) : cache d'un an ; les autres sont revalidés.
+    <If "%{REQUEST_URI} =~ /\.(css|js|svg|avif|webp|jpe?g|png|ico|woff2|pdf)$/ && %{QUERY_STRING} =~ /^v=/">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </If>
+    <ElseIf "%{REQUEST_URI} =~ /\.(css|js|svg|avif|webp|jpe?g|png|ico|woff2|pdf)$/">
+        Header set Cache-Control "public, no-cache"
+    </ElseIf>
+</IfModule>

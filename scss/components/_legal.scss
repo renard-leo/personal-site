@@ -1,0 +1,33 @@
+@use "../variables" as *;
+@use "../s4_mixin" as *;
+
+.legal {padding-block: var(--space-2xl) var(--space-section)}
+
+.legal-head {margin-bottom: var(--space-2xl)}
+
+.legal-title {font-size: var(--fs-3xl); letter-spacing: var(--ls-display)}
+
+.legal-grid {
+    display: grid; gap: var(--space-2xl);
+    @include mq($bp-lg) {grid-template-columns: var(--toc-w) minmax(0, 1fr); gap: var(--space-gap); align-items: start}
+}
+
+.legal-toc {
+    .legal-toc-title {margin-bottom: var(--space-xs); color: var(--color-text-muted); font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: var(--fw-semibold); letter-spacing: var(--ls-small)}
+    ol {@include reset-list}
+    a {
+        display: flex; align-items: center; min-height: var(--tap); padding-left: var(--space-md); border-left: var(--bw-md) solid var(--color-border); color: var(--color-text-muted); text-decoration: none; transition: color var(--dur-fast), border-color var(--dur-fast);
+        &:hover {border-color: var(--color-brand); color: var(--color-text)}
+    }
+    @include mq($bp-lg) {position: sticky; top: calc(var(--header-offset) + var(--space-xl))}
+}
+
+.prose {
+    max-width: var(--container-prose); color: var(--color-text-muted);
+    section + section {margin-top: var(--space-2xl); padding-top: var(--space-2xl); border-top: var(--bw-sm) solid var(--color-border)}
+    h2 {margin-bottom: var(--space-md); color: var(--color-text); font-size: var(--fs-2xl)}
+    h3 {margin-top: var(--space-xl); margin-bottom: var(--space-xs); color: var(--color-text); font-size: var(--fs-lg); letter-spacing: var(--ls-title)}
+    p + p {margin-top: var(--space-sm)}
+    a {font-weight: var(--fw-semibold)}
+    .legal-action {margin-top: var(--space-lg)}
+}

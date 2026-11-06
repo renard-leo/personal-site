@@ -1,0 +1,23 @@
+{
+    "name": "renardleo",
+    "version": "2.0.0",
+    "private": true,
+    "type": "module",
+    "description": "Site personnel de Léo Renard, développeur full-stack",
+    "scripts": {
+        "build:css": "sass scss/main.scss public/assets/css/main.css --style=compressed --no-source-map",
+        "watch:css": "sass scss/main.scss public/assets/css/main.css --watch --source-map",
+        "build:images": "node scripts/images.mjs",
+        "build:svg": "node scripts/svg.mjs",
+        "build:vendor": "node scripts/vendor.mjs",
+        "build:js": "node scripts/js.mjs",
+        "watch:js": "node scripts/js.mjs --watch",
+        "build": "npm run build:images && npm run build:svg && npm run build:vendor && npm run build:css && npm run build:js"
+    },
+    "devDependencies": {
+        "esbuild": "^0.28.2",
+        "sass": "^1.107.1",
+        "sharp": "^0.35.5",
+        "vanilla-cookieconsent": "3.3.0"
+    }
+}

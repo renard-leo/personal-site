@@ -1,0 +1,30 @@
+@use "../variables" as *;
+@use "../s4_mixin" as *;
+
+.code-window {
+    overflow: hidden; border: var(--bw-sm) solid var(--color-border); border-radius: var(--radius-lg); background: var(--code-bg); color: var(--code-text); font-family: var(--font-mono); font-size: var(--fs-code); line-height: var(--lh-code); font-variant-ligatures: none; box-shadow: var(--shadow-lg);
+    .code-window-bar {display: flex; align-items: center; height: var(--code-bar-h); padding-inline: var(--space-md); border-bottom: var(--bw-sm) solid var(--color-border); background: var(--code-bar); font-family: var(--font-sans); font-size: var(--fs-xs)}
+    .code-window-tab {
+        display: inline-flex; align-items: center; gap: var(--space-xs); color: var(--code-muted); font-family: var(--font-mono);
+        .icon {@include square(var(--icon-sm)); color: var(--code-keyword)}
+    }
+    .code-body {@include reset-list; padding-block: var(--space-md); padding-right: var(--space-lg); counter-reset: line}
+    .code-line {
+        position: relative; padding-left: calc(var(--code-gutter) + var(--indent, 0ch)); counter-increment: line;
+        &::before {content: counter(line); content: counter(line) / ""; position: absolute; top: 0; left: 0; width: var(--code-gutter); padding-right: var(--space-md); color: var(--code-muted); text-align: right; text-indent: 0; font-variant-numeric: tabular-nums; @include user-select(none)}
+    }
+}
+
+.tok-punct, .tok-plain {color: var(--code-muted)}
+.tok-keyword, .tok-var {color: var(--code-keyword)}
+.tok-string {color: var(--code-string)}
+.tok-fn {color: var(--code-fn)}
+.tok-type {color: var(--code-text); font-weight: var(--fw-semibold)}
+
+.skills-file {
+    .skill-groups {@include reset-list}
+    .skill-group {--indent: 4ch; text-indent: -2ch}
+    .skill-title {display: inline; color: var(--code-keyword); font: inherit; letter-spacing: normal}
+    .skill-items {display: inline; @include reset-list}
+    .skill-item {display: inline}
+}

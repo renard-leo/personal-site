@@ -1,0 +1,53 @@
+@use "../variables" as *;
+@use "../s4_mixin" as *;
+
+// CookieConsent (assets/vendor/cookieconsent/cookieconsent.css, chargé avant main.css) : ses variables suivent les tokens, donc le thème du site.
+#cc-main {
+    font-size: var(--fs-md); line-height: var(--lh-body);
+    --cc-font-family: var(--font-sans); --cc-z-index: var(--z-banner); --cc-modal-margin: var(--space-gutter); --cc-modal-border-radius: var(--radius-lg); --cc-btn-border-radius: var(--radius-md); --cc-pm-toggle-border-radius: var(--radius-pill);
+    --cc-bg: var(--color-surface); --cc-primary-color: var(--color-text); --cc-secondary-color: var(--color-text-muted); --cc-link-color: var(--color-accent); --cc-separator-border-color: var(--color-border); --cc-overlay-bg: var(--color-overlay);
+    --cc-btn-primary-bg: var(--color-neutral); --cc-btn-primary-color: var(--color-on-neutral); --cc-btn-primary-border-color: var(--color-neutral); --cc-btn-primary-hover-bg: var(--color-neutral-hover); --cc-btn-primary-hover-color: var(--color-on-neutral); --cc-btn-primary-hover-border-color: var(--color-neutral-hover);
+    --cc-btn-secondary-bg: var(--color-surface); --cc-btn-secondary-color: var(--color-text); --cc-btn-secondary-border-color: var(--color-border-strong); --cc-btn-secondary-hover-bg: var(--color-surface-muted); --cc-btn-secondary-hover-color: var(--color-text); --cc-btn-secondary-hover-border-color: var(--color-text-muted);
+    --cc-toggle-on-bg: var(--color-brand); --cc-toggle-off-bg: var(--color-field-border); --cc-toggle-on-knob-bg: var(--color-switch-knob); --cc-toggle-off-knob-bg: var(--color-switch-knob); --cc-toggle-readonly-bg: var(--color-text-muted); --cc-toggle-readonly-knob-bg: var(--color-surface); --cc-toggle-readonly-knob-icon-color: var(--color-text-muted);
+    --cc-section-category-border: var(--color-border); --cc-cookie-category-block-bg: var(--color-surface-muted); --cc-cookie-category-block-border: var(--color-border); --cc-cookie-category-block-hover-bg: var(--color-bg-alt); --cc-cookie-category-block-hover-border: var(--color-border-strong); --cc-cookie-category-expanded-block-hover-bg: var(--color-fill);
+    --cc-footer-bg: var(--color-surface-muted); --cc-footer-color: var(--color-text-muted); --cc-footer-border-color: var(--color-border);
+    :focus-visible {@include focus-ring}
+    a {
+        color: var(--color-accent); background: none; text-decoration: underline; text-decoration-thickness: var(--bw-sm); text-underline-offset: var(--underline-offset);
+        &:hover {color: var(--color-accent-hover); text-decoration-thickness: var(--bw-md)}
+    }
+    .cm, .pm {border: var(--bw-sm) solid var(--color-border); box-shadow: var(--shadow-lg)}
+    // Conteneurs focalisés par la bibliothèque à l'ouverture (tabindex="-1"), comme <main> : pas d'anneau.
+    .cm:focus, .pm__title:focus {outline: none}
+    .cm__title, .pm__title {font-family: var(--font-display); font-weight: var(--fw-bold); letter-spacing: var(--ls-title)}
+    .cm__title {font-size: var(--fs-lg)}
+    .pm__title {font-size: var(--fs-xl)}
+    .cm__desc, .pm__section-desc-wrapper {font-size: var(--fs-sm); line-height: var(--lh-body)}
+    .cm__btn, .pm__btn {min-height: var(--control-h); border-radius: var(--radius-pill); font-size: var(--fs-sm); font-weight: var(--fw-semibold)}
+    .pm__close-btn {@include square(var(--tap)); border-radius: var(--radius-pill)}
+    .pm-overlay {@include backdrop-filter(var(--backdrop-filter))}
+    .section__toggle-wrapper, .toggle__icon, .toggle__label {width: var(--switch-w); height: var(--switch-h)}
+    .toggle__icon-circle {top: calc((var(--switch-h) - var(--switch-knob)) / 2); left: calc((var(--switch-h) - var(--switch-knob)) / 2); @include square(var(--switch-knob)); box-shadow: var(--shadow-sm)}
+    // Zone cliquable de 44 px de haut, centrée sur l'interrupteur dessiné.
+    .section__toggle {
+        width: var(--switch-w); height: var(--tap);
+        &:focus-visible {outline: none}
+        &:focus-visible ~ .toggle__icon {@include focus-ring}
+        &:checked ~ .toggle__icon .toggle__icon-circle {transform: translateX(calc(var(--switch-w) - var(--switch-h)))}
+    }
+    @include motion {--cc-modal-transition-duration: var(--dur-base)}
+    @media (prefers-reduced-motion: reduce) {
+        .toggle__icon, .toggle__icon-circle, .cm__btn, .pm__btn {transition: none}
+    }
+    @media (forced-colors: active) {
+        .toggle__icon {forced-color-adjust: none; background: Canvas; box-shadow: 0 0 0 var(--bw-sm) ButtonText}
+        .toggle__icon-circle {background: ButtonText}
+        .toggle__icon svg {stroke: Canvas}
+        .section__toggle:checked ~ .toggle__icon {background: Highlight; box-shadow: 0 0 0 var(--bw-sm) Highlight}
+        .section__toggle:checked ~ .toggle__icon .toggle__icon-circle {background: HighlightText}
+        .section__toggle:checked ~ .toggle__icon svg {stroke: Highlight}
+        .section__toggle:checked:disabled ~ .toggle__icon {background: GrayText; box-shadow: 0 0 0 var(--bw-sm) GrayText}
+        .section__toggle:checked:disabled ~ .toggle__icon .toggle__icon-circle {background: Canvas}
+        .section__toggle:checked:disabled ~ .toggle__icon svg {stroke: GrayText}
+    }
+}

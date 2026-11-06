@@ -1,0 +1,64 @@
+#!/bin/sh
+# Lancé par git après chaque « git pull » sur le serveur (git config core.hooksPath .githooks) :
+# dépendances, recompilation de ce qui a changé, puis robots.txt et sitemap.xml à régénérer.
+# Premier déploiement, ou reprise après une erreur : FULL=1 sh .githooks/post-merge
+set -eu
+cd "$(git rev-parse --show-toplevel)"
+
+trap '[ $? = 0 ] || echo "✗ Mise à jour interrompue. Une fois le problème corrigé : FULL=1 sh .githooks/post-merge" >&2' EXIT
+
+full=${FULL:-0}
+if ! git rev-parse -q --verify ORIG_HEAD > /dev/null || [ ! -f public/assets/css/main.css ]; then
+    full=1
+fi
+
+# Vrai si l'un des chemins a changé depuis l'état d'avant le pull (toujours vrai en mode complet).
+changed() {
+    [ "$full" = 1 ] || [ -n "$(git diff --name-only ORIG_HEAD HEAD -- "$@")" ]
+}
+
+step() {
+    printf '\n→ %s\n' "$1"
+}
+
+# Commande Composer lancée avec PHP 8.3, réglable si le PHP par défaut du serveur diffère : git config deploy.composer "…"
+composer=$(git config --get deploy.composer || echo composer)
+
+if [ ! -f vendor/autoload.php ] || changed composer.json composer.lock; then
+    step 'Dépendances PHP'
+    $composer install --no-dev --optimize-autoloader --no-interaction --no-progress
+fi
+
+node_deps=0
+if [ ! -d node_modules ] || changed package.json package-lock.json; then
+    node_deps=1
+fi
+
+# Même ordre que « npm run build » ; seules les parties dont les sources ont changé sont recompilées.
+builds=''
+if changed resources/images scripts/images.mjs package-lock.json; then builds="$builds images"; fi
+if changed resources/images/logo.svg scripts/svg.mjs; then builds="$builds svg"; fi
+if changed scripts/vendor.mjs package-lock.json; then builds="$builds vendor"; fi
+if changed scss package-lock.json; then builds="$builds css"; fi
+if changed js scripts/js.mjs package-lock.json; then builds="$builds js"; fi
+
+if [ "$node_deps" = 1 ] || [ -n "$builds" ]; then
+    if ! command -v npm > /dev/null; then
+        echo "✗ npm introuvable sur ce serveur : compilation impossible (${builds# }). Voir le README, « Mise à jour par git pull »." >&2
+        exit 1
+    fi
+fi
+
+if [ "$node_deps" = 1 ]; then
+    step 'Dépendances Node.js'
+    npm ci --no-audit --no-fund
+fi
+
+for build in $builds; do
+    step "Compilation : $build"
+    npm run "build:$build"
+done
+
+rm -f public/robots.txt public/sitemap.xml
+
+step 'Site à jour (robots.txt et sitemap.xml seront régénérés au prochain appel)'

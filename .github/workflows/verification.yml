@@ -1,0 +1,37 @@
+name: Vérification
+
+# Aucun accès au serveur : ce workflow vérifie seulement qu'un commit est sain avant le « git pull » en production.
+on:
+    push:
+    pull_request:
+
+permissions:
+    contents: read
+
+jobs:
+    verification:
+        runs-on: ubuntu-24.04
+        steps:
+            -   uses: actions/checkout@v5
+
+            -   uses: actions/setup-node@v5
+                with:
+                    node-version: 24
+                    cache: npm
+
+            -   uses: shivammathur/setup-php@v2
+                with:
+                    php-version: '8.3'
+                    tools: composer:v2
+                    coverage: none
+
+            -   name: Syntaxe PHP
+                run: find config public src templates -name '*.php' -print0 | xargs -0 -n1 php -l > /dev/null
+
+            -   name: Compilation (images, logo, bibliothèques, CSS, JavaScript)
+                run: |
+                    npm ci
+                    npm run build
+
+            -   name: Dépendances PHP
+                run: composer install --no-dev --no-interaction --no-progress

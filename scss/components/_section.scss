@@ -1,0 +1,21 @@
+@use "../s4_mixin" as *;
+
+.section {
+    padding-block: var(--space-section);
+    // Voile translucide : la grille de points et les lueurs du fond restent perceptibles.
+    &.section-skills, &.section-contact {
+        background: var(--color-bg-veil);
+        @include opaque {background: var(--color-bg-alt)}
+    }
+}
+
+.section-head {margin-bottom: var(--space-2xl)}
+
+.eyebrow {
+    margin-bottom: var(--space-sm); color: var(--color-text-muted); font-family: var(--font-mono); font-size: var(--fs-sm); line-height: var(--lh-snug);
+    .eyebrow-mark {color: var(--color-accent)}
+}
+
+.section-title {font-size: var(--fs-3xl); letter-spacing: var(--ls-display)}
+
+.subsection-title {margin-top: var(--space-4xl); margin-bottom: var(--space-xl); font-size: var(--fs-2xl)}

@@ -1,0 +1,247 @@
+@use "../variables" as *;
+@use "../s4_mixin" as *;
+
+// Hero « studio » : plan de travail d'un outil de création doublé d'un inspecteur de navigateur.
+// Le contenu est statique et lisible sans JS ; règles, sélection et intro sont des surimpressions décoratives.
+.hero-studio {
+    --ruler: var(--studio-ruler-sm); --board-pad: var(--space-xl); --scale-offset: 20; --glide: var(--dur-base);
+    --origin-x: calc((100% - min(100%, var(--container) + 2 * var(--space-gutter))) / 2 + var(--space-gutter));
+    --origin-y: calc(var(--ruler) + var(--board-pad));
+    position: relative; display: flex; flex-direction: column; min-height: calc(100svh - var(--header-h)); padding-top: var(--origin-y); overflow-x: clip;
+    [data-inspect] {position: relative}
+    &.is-touring {--glide: var(--dur-slow)}
+    @include mq($bp-md) {--ruler: var(--studio-ruler)}
+}
+
+// Règles graduées : l'origine (0) est le bord du contenu, comme celle d'un cadre dans un outil de design.
+.studio-rulers {
+    position: absolute; inset: 0; z-index: 1; pointer-events: none; color: var(--color-text-muted); font-family: var(--font-mono); font-size: var(--fs-2xs); line-height: 1; font-variant-numeric: tabular-nums;
+    @media (forced-colors: active) {display: none}
+}
+
+.studio-ruler {
+    --tick: var(--color-border-strong);
+    position: absolute; overflow: hidden; background: var(--color-bg-veil);
+    .studio-scale {position: absolute}
+    .studio-scale span {position: absolute}
+    .studio-ruler-band {position: absolute; top: 0; left: 0; background: var(--studio-margin); opacity: 0; transform-origin: 0 0; transition: opacity var(--dur-fast), transform var(--glide) var(--ease-spring)}
+    .studio-ruler-mark {position: absolute; top: 0; left: 0; background: var(--color-accent); opacity: 0; transition: opacity var(--dur-fast)}
+    @include opaque {background: var(--color-bg)}
+}
+
+.studio-ruler-x {
+    top: 0; right: 0; left: 0; height: var(--ruler); border-bottom: var(--bw-sm) solid var(--tick);
+    .studio-scale {top: 0; bottom: 0; left: calc(var(--origin-x) - var(--scale-offset) * var(--ruler-major)); width: calc(3 * var(--scale-offset) * var(--ruler-major)); background-image: linear-gradient(to right, var(--tick) var(--bw-sm), transparent var(--bw-sm)), linear-gradient(to right, var(--tick) var(--bw-sm), transparent var(--bw-sm)), linear-gradient(to right, var(--tick) var(--bw-sm), transparent var(--bw-sm)); background-size: var(--ruler-step) var(--ruler-tick-sm), calc(5 * var(--ruler-step)) var(--ruler-tick-md), var(--ruler-major) 100%; background-position: 0 100%; background-repeat: repeat-x}
+    .studio-scale span {top: var(--space-3xs); left: calc((var(--n) + var(--scale-offset)) * var(--ruler-major) + var(--space-2xs))}
+    .studio-ruler-band, .studio-ruler-mark {bottom: 0; width: var(--bw-sm)}
+}
+
+.studio-ruler-y {
+    top: 0; bottom: 0; left: 0; width: var(--ruler); border-right: var(--bw-sm) solid var(--tick);
+    .studio-scale {right: 0; left: 0; top: calc(var(--origin-y) - var(--scale-offset) * var(--ruler-major)); height: calc(3 * var(--scale-offset) * var(--ruler-major)); background-image: linear-gradient(to bottom, var(--tick) var(--bw-sm), transparent var(--bw-sm)), linear-gradient(to bottom, var(--tick) var(--bw-sm), transparent var(--bw-sm)), linear-gradient(to bottom, var(--tick) var(--bw-sm), transparent var(--bw-sm)); background-size: var(--ruler-tick-sm) var(--ruler-step), var(--ruler-tick-md) calc(5 * var(--ruler-step)), 100% var(--ruler-major); background-position: 100% 0; background-repeat: repeat-y}
+    .studio-scale span {left: var(--space-3xs); top: calc((var(--n) + var(--scale-offset)) * var(--ruler-major) + var(--space-2xs)); transform-origin: 0 0; transform: rotate(-90deg) translateX(-100%)}
+    .studio-ruler-band, .studio-ruler-mark {right: 0; height: var(--bw-sm)}
+}
+
+.studio-ruler-corner {position: absolute; top: 0; left: 0; @include square(var(--ruler)); border-right: var(--bw-sm) solid var(--color-border-strong); border-bottom: var(--bw-sm) solid var(--color-border-strong); background: var(--color-bg)}
+
+// Composition éditoriale : nom en très grand corps, portrait et texte décalés sur une grille de 12 colonnes.
+.studio-board {
+    --cols: 6; --gap: var(--space-md);
+    position: relative; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); column-gap: var(--gap); align-content: start; padding-bottom: var(--board-pad); cursor: default; container-type: inline-size;
+    > * {grid-column: 1 / -1}
+    .studio-portrait {grid-column: 2 / -1}
+    .studio-comment {grid-column: 1 / 6}
+    @include mq($bp-md) {
+        --cols: 12; --gap: var(--space-lg);
+        grid-template-rows: auto auto auto auto 1fr;
+        .studio-name {grid-row: 1}
+        .studio-role {grid-row: 2}
+        .studio-lead {grid-row: 3}
+        .studio-actions {grid-row: 4}
+        .studio-role, .studio-lead, .studio-actions {grid-column: 7 / -1}
+        .studio-portrait {grid-column: 1 / 6; grid-row: 2 / 6; margin-top: 0}
+        .studio-comment {grid-column: 6 / 12; grid-row: 5; align-self: end; margin-top: var(--space-xl); margin-left: calc(-1 * (var(--gap) + var(--studio-pin) / 2))}
+    }
+    @include mq($bp-lg) {
+        .studio-role, .studio-lead, .studio-actions {grid-column: 6 / -1}
+        .studio-portrait {grid-column: 1 / 5}
+        .studio-comment {grid-column: 5 / 10}
+    }
+}
+
+.studio-columns {
+    position: absolute; inset: calc(-1 * var(--board-pad)) 0 0; display: grid; grid-template-columns: inherit; column-gap: inherit; opacity: 0; pointer-events: none;
+    span {background: var(--studio-column)}
+    @media (forced-colors: active) {display: none}
+}
+
+.studio-name {
+    margin-bottom: var(--space-xl); font-size: var(--fs-poster); line-height: var(--lh-poster); letter-spacing: var(--ls-poster);
+    .studio-name-line {
+        position: relative; display: block;
+        &:last-child {text-align: end}
+    }
+    @supports (font-size: 1cqi) {font-size: var(--fs-poster-stacked)}
+    @include mq($bp-sm) {
+        .studio-name-line {display: inline-block}
+        @supports (font-size: 1cqi) {font-size: var(--fs-poster-fluid)}
+    }
+}
+
+.studio-role {
+    display: flex; flex-direction: column; gap: var(--space-2xs);
+    .studio-role-title {font-family: var(--font-display); font-size: var(--fs-2xl); font-weight: var(--fw-semibold); line-height: var(--lh-heading); letter-spacing: var(--ls-heading)}
+    .studio-role-meta {
+        display: flex; flex-wrap: wrap; gap: 0 var(--space-xs); color: var(--color-text-muted); font-family: var(--font-mono); font-size: var(--fs-sm); line-height: var(--lh-snug);
+        > span + span::before {content: "·"; content: "·" / ""; margin-right: var(--space-xs)}
+    }
+}
+
+.studio-lead {max-width: var(--studio-lead-w); margin-top: var(--space-lg); font-size: var(--fs-xl); line-height: var(--lh-snug); letter-spacing: var(--ls-title)}
+
+.studio-actions {display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-sm) var(--space-xl); margin-top: var(--space-xl)}
+
+.studio-link {
+    display: inline-flex; align-items: center; gap: var(--space-xs); min-height: var(--tap); border-radius: var(--radius-sm); color: var(--color-text); font-weight: var(--fw-semibold); text-decoration: underline; text-decoration-color: var(--color-border-strong); text-decoration-thickness: var(--bw-sm); text-underline-offset: var(--underline-offset); cursor: pointer; transition: text-decoration-color var(--dur-fast);
+    &:hover {color: var(--color-text); text-decoration-color: currentColor}
+    .icon-trailing {@include square(var(--icon-sm)); color: var(--color-text-muted)}
+}
+
+.studio-portrait {
+    --crop-gap: var(--crop-gap-sm); --crop-length: var(--crop-length-sm);
+    margin-top: var(--space-2xl);
+    .studio-photo {
+        position: relative; display: block; aspect-ratio: 4 / 5; background: var(--color-bg-alt);
+        &::before {@include crop-marks(var(--crop-gap), var(--crop-length), var(--color-border-strong))}
+    }
+    img {@include square(100%); object-fit: cover}
+    @include mq($bp-md) {--crop-gap: var(--crop-gap-lg); --crop-length: var(--crop-length-lg)}
+}
+
+// Commentaire épinglé, façon outil de design : n'existe que si open_to_work() est vrai.
+.studio-comment {
+    z-index: 1; display: flex; align-items: flex-start; gap: var(--space-xs); justify-self: start; max-width: var(--studio-comment-w); margin-top: calc(-1 * var(--space-2xl)); font-size: var(--fs-sm); line-height: var(--lh-snug);
+    .studio-comment-pin {
+        flex: none; @include square(var(--studio-pin)); padding: var(--bw-md); border-radius: var(--radius-pill) var(--radius-pill) var(--radius-pill) 0; background: var(--color-surface); box-shadow: var(--shadow-md);
+        img {@include square(100%); border-radius: var(--radius-round); object-fit: cover; object-position: 50% 20%}
+    }
+    .studio-comment-body {padding: var(--space-sm) var(--space-md); border: var(--bw-sm) solid var(--color-border); border-radius: var(--radius-md) var(--radius-md) var(--radius-md) var(--radius-xs); background: var(--color-surface); box-shadow: var(--shadow-md)}
+    .studio-comment-author {font-weight: var(--fw-semibold)}
+    .studio-comment-text {margin-top: var(--space-3xs); font-size: var(--fs-md)}
+    .studio-comment-facts {
+        display: flex; flex-wrap: wrap; gap: 0 var(--space-xs); margin-top: var(--space-2xs); color: var(--color-text-muted);
+        > div {display: flex}
+        > div + div::before {content: "·"; content: "·" / ""; margin-right: var(--space-xs)}
+    }
+}
+
+// Surimpressions de l'inspecteur : positionnées par transform depuis hero-studio.js.
+.studio-overlay {
+    position: absolute; inset: 0; z-index: 2; overflow: hidden; pointer-events: none; contain: strict;
+    > * {position: absolute; top: 0; left: 0}
+    .studio-guide {background: var(--studio-guide); opacity: 0; transition: opacity var(--dur-fast)}
+    .studio-guide-x {width: var(--bw-sm); height: 100%}
+    .studio-guide-y {width: 100%; height: var(--bw-sm)}
+    .studio-box {border-style: solid; opacity: 0; transition: opacity var(--dur-base)}
+    .studio-box-margin {border-color: var(--studio-margin)}
+    .studio-box-padding {border-color: var(--studio-padding)}
+    .studio-selection {opacity: 0; transition: opacity var(--dur-fast)}
+    .studio-edge, .studio-handle, .studio-tag, .studio-size {position: absolute; top: 0; left: 0; transform-origin: 0 0; transition: transform var(--glide) var(--ease-spring)}
+    .studio-edge {@include square(var(--bw-sm)); background: var(--color-accent)}
+    .studio-handle {@include square(var(--studio-handle)); translate: -50% -50%; border: var(--bw-sm) solid var(--color-accent); background: var(--color-surface)}
+    .studio-tag, .studio-size {padding: var(--space-3xs) var(--space-xs); border-radius: var(--radius-xs); background: var(--color-accent); color: var(--color-on-neutral); font-family: var(--font-mono); font-size: var(--fs-2xs); line-height: var(--lh-snug); white-space: nowrap}
+    .studio-tag {translate: 0 calc(-100% - var(--space-2xs))}
+    .studio-size {translate: -50% var(--space-2xs)}
+    @media (prefers-reduced-motion: reduce) {
+        * {transition-property: opacity}
+    }
+    @media (forced-colors: active) {display: none}
+}
+
+.hero-studio {
+    &.is-pointing {
+        .studio-guide, .studio-ruler-mark {opacity: 1}
+    }
+    &.is-selected {
+        .studio-selection, .studio-ruler-band {opacity: 1}
+    }
+    &.has-box .studio-box {opacity: 1}
+    &.is-instant {
+        .studio-overlay *, .studio-ruler-band {transition: none}
+    }
+}
+
+.studio-statusbar {
+    position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); min-height: var(--studio-statusbar-h); margin-top: auto; margin-left: var(--ruler); padding-inline: var(--space-sm); border-top: var(--bw-sm) solid var(--color-border-strong); background: var(--color-bg-veil); color: var(--color-text-muted); font-family: var(--font-mono); font-size: var(--fs-2xs); line-height: var(--lh-snug); white-space: nowrap;
+    .studio-path {min-width: 0; overflow: hidden; text-overflow: ellipsis}
+    .studio-readout {
+        display: flex; gap: var(--space-md); font-variant-numeric: tabular-nums;
+        span:empty {display: none}
+    }
+    @include opaque {background: var(--color-bg)}
+}
+
+// Intro « rendu en direct », une fois par session (classe posée par templates/inline/theme.js avant le premier rendu) :
+// cadres filaires et grille, puis le contenu se peint. Tout est en CSS et se termine seul, même si le JS échoue.
+@include motion {
+    .is-intro .hero-studio {
+        [data-inspect] {animation: studio-frame var(--dur-intro) linear}
+        [data-inspect]::before {content: attr(data-inspect); content: attr(data-inspect) / ""; position: absolute; bottom: 100%; left: 0; z-index: 3; padding: var(--space-3xs) var(--space-2xs); background: var(--color-accent); color: var(--color-on-neutral); font-family: var(--font-mono); font-size: var(--fs-2xs); font-weight: var(--fw-regular); line-height: 1; letter-spacing: normal; text-align: start; white-space: nowrap; animation: studio-label var(--dur-intro) linear both}
+        [data-inspect]:not(.studio-name)::after, .studio-name-line::after {content: ""; position: absolute; inset: 0; z-index: 1; border-radius: inherit; background: repeating-linear-gradient(to bottom, transparent 0 var(--skeleton-top), var(--color-fill-strong) var(--skeleton-top) var(--skeleton-bottom), transparent var(--skeleton-bottom) 1lh) var(--color-bg); animation: studio-paint var(--dur-paint) var(--ease-out) var(--paint-at, var(--intro-paint)) both}
+        .studio-role {--paint-at: calc(var(--intro-paint) + var(--intro-step))}
+        .studio-lead {--paint-at: calc(var(--intro-paint) + 2 * var(--intro-step))}
+        .button {--paint-at: calc(var(--intro-paint) + 3 * var(--intro-step))}
+        .studio-link {--paint-at: calc(var(--intro-paint) + 4 * var(--intro-step))}
+        .studio-comment {--paint-at: calc(var(--intro-paint) + 6 * var(--intro-step))}
+        .studio-portrait[data-inspect]::after {background: linear-gradient(to top right, transparent calc(50% - var(--bw-sm)), var(--color-border-strong) 50%, transparent calc(50% + var(--bw-sm))), linear-gradient(to bottom right, transparent calc(50% - var(--bw-sm)), var(--color-border-strong) 50%, transparent calc(50% + var(--bw-sm))), var(--color-bg-alt); animation-name: studio-unveil}
+        .studio-photo img {animation: studio-develop var(--dur-develop) var(--ease-out) var(--intro-paint) both}
+        .studio-columns {animation: studio-columns var(--dur-intro) linear both}
+    }
+}
+
+// Nom qui se décode lettre par lettre (hero-studio.js) : le vrai texte reste dans le DOM, seul son rendu est masqué ;
+// les glyphes brouillés, comme les libellés de l'intro, ont un texte alternatif vide et ne sont pas restitués.
+.hero-studio .studio-name.is-decoding {
+    .studio-name-line {color: transparent}
+    .studio-name-line::after {content: attr(data-glyphs); content: attr(data-glyphs) / ""; position: absolute; inset: 0; z-index: 1; color: var(--color-text); background: none; white-space: nowrap; animation: none}
+}
+
+// Profondeur à la sortie de l'écran : le portrait descend plus lentement que le texte.
+@include scroll-driven {
+    .hero-studio .studio-photo {animation: studio-drift linear both; animation-timeline: view(); animation-range: exit 0% exit 100%}
+}
+
+@keyframes studio-frame {
+    0%, 78% {box-shadow: 0 0 0 var(--bw-sm) var(--color-accent)}
+    100% {box-shadow: 0 0 0 var(--bw-sm) transparent}
+}
+
+@keyframes studio-label {
+    0% {opacity: 0}
+    8%, 72% {opacity: 1}
+    100% {opacity: 0}
+}
+
+@keyframes studio-paint {
+    from {clip-path: inset(0)}
+    to {clip-path: inset(0 0 0 100%)}
+}
+
+@keyframes studio-unveil {
+    to {opacity: 0}
+}
+
+@keyframes studio-develop {
+    from {filter: brightness(1.9) contrast(.35)}
+}
+
+@keyframes studio-columns {
+    0% {opacity: 0}
+    10%, 65% {opacity: 1}
+    100% {opacity: 0}
+}
+
+@keyframes studio-drift {
+    to {transform: translateY(var(--drift-photo))}
+}

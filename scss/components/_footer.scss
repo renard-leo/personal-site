@@ -1,0 +1,14 @@
+@use "../s4_mixin" as *;
+
+.site-footer {
+    padding-block: var(--space-xl); border-top: var(--bw-sm) solid var(--color-border); color: var(--color-text-muted); font-size: var(--fs-sm);
+    .footer-bar {display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-xs) var(--space-xl)}
+    .footer-links {@include reset-list; display: flex; flex-wrap: wrap; gap: 0 var(--space-2xs); margin-inline: calc(-1 * var(--space-xs))}
+    .footer-link {
+        @include reset-button; display: inline-flex; align-items: center; gap: var(--space-xs); min-height: var(--tap); padding-inline: var(--space-xs); border-radius: var(--radius-sm); color: var(--color-text-muted); text-decoration: none;
+        &:hover {color: var(--color-text); text-decoration: underline; text-underline-offset: var(--underline-offset)}
+        .icon {@include square(var(--icon-sm))}
+    }
+}
+
+html:not(.js) .consent-opener, .js .consent-fallback {display: none}

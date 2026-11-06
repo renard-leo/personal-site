@@ -1,0 +1,101 @@
+@use "../variables" as *;
+@use "../s4_mixin" as *;
+
+.contact-grid {
+    display: grid; gap: var(--space-2xl);
+    @include mq($bp-lg) {grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: var(--space-gap); align-items: start}
+}
+
+.contact-intro {
+    @include mq($bp-lg) {position: sticky; top: calc(var(--header-offset) + var(--space-2xl))}
+}
+
+.contact-lead {max-width: var(--measure); font-size: var(--fs-xl); line-height: var(--lh-snug); letter-spacing: var(--ls-title)}
+
+.contact-links {@include reset-list; display: grid; gap: var(--space-xs); max-width: var(--measure-sm); margin-top: var(--space-xl)}
+
+.contact-link {
+    display: flex; align-items: center; gap: var(--space-sm); min-height: var(--control-h); padding: var(--space-xs) var(--space-md); border: var(--bw-sm) solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); font-weight: var(--fw-semibold); text-decoration: none; transition: border-color var(--dur-fast), background-color var(--dur-fast);
+    &:hover {border-color: var(--color-border-strong); background: var(--color-surface-muted); color: var(--color-text)}
+    .icon-trailing {margin-left: auto; color: var(--color-text-muted); @include square(var(--icon-sm))}
+    .contact-link-meta {margin-left: auto; color: var(--color-text-muted); font-size: var(--fs-sm); font-weight: var(--fw-regular)}
+    .contact-link-meta + .icon-trailing {margin-left: 0}
+}
+
+.contact-card {padding: clamp(var(--space-lg), 4vw, var(--space-2xl)); border: var(--bw-sm) solid var(--color-border); border-radius: var(--radius-xl); background: var(--color-surface); box-shadow: var(--shadow-md)}
+
+.contact-form {position: relative; display: grid; gap: var(--space-lg)}
+
+.form-required, .field-hint {color: var(--color-text-muted); font-size: var(--fs-sm)}
+
+.form-trap {position: absolute; left: -100vw; @include square(1px); overflow: hidden}
+
+.form-status {
+    display: flex; align-items: flex-start; gap: var(--space-sm); padding: var(--space-md); border: var(--bw-sm) solid currentColor; border-radius: var(--radius-md); font-weight: var(--fw-medium);
+    &:not(.is-success):not(.is-error) {@include visually-hidden}
+    &:focus {outline: none}
+    &.is-success {background: var(--color-success-bg); color: var(--color-success)}
+    &.is-error {background: var(--color-danger-bg); color: var(--color-danger)}
+    .icon {margin-top: var(--space-3xs)}
+    .form-status-text {color: var(--color-text)}
+}
+
+.field {
+    display: grid; gap: var(--space-xs);
+    .field-label {font-weight: var(--fw-semibold)}
+    .field-input {
+        width: 100%; min-height: var(--control-h); padding: var(--space-sm) var(--space-md); border: var(--bw-sm) solid var(--color-field-border); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); font-size: var(--fs-md); line-height: var(--lh-snug); transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+        &:hover {border-color: var(--color-text-muted)}
+        &:focus-visible {border-color: var(--color-focus); outline: var(--bw-md) solid var(--color-focus); outline-offset: 0}
+        &[aria-invalid="true"] {border-color: var(--color-danger); box-shadow: inset var(--bw-lg) 0 0 var(--color-danger)}
+    }
+    textarea.field-input {min-height: var(--textarea-h); resize: vertical; line-height: var(--lh-body)}
+    .field-error {
+        display: flex; align-items: flex-start; gap: var(--space-xs); color: var(--color-danger); font-size: var(--fs-sm); font-weight: var(--fw-medium);
+        .icon {@include square(var(--icon-sm)); margin-top: var(--space-3xs)}
+    }
+}
+
+.form-actions {
+    display: flex;
+    .form-submit {width: 100%; @include mq($bp-sm) {width: auto}}
+    .spinner {display: none; @include square(var(--icon-sm)); border: var(--bw-md) solid currentColor; border-right-color: transparent; border-radius: var(--radius-round)}
+    .is-busy .spinner {display: inline-block; @include motion {animation: spin var(--dur-slow) linear infinite}}
+}
+
+// reCAPTCHA obligatoire : notice placée avant le bouton d'envoi tant que le consentement manque ou que le script est bloqué.
+.form-antispam {
+    display: grid; gap: var(--space-sm); padding: var(--space-md); border: var(--bw-sm) solid var(--color-border-strong); border-radius: var(--radius-md); background: var(--color-surface-muted); color: var(--color-text);
+    // Focus reçu quand le bouton d'envoi se désactive : l'anneau montre où il est passé, y compris à la souris (loupe).
+    &:focus {@include focus-ring}
+    &.is-error {
+        border-color: var(--color-danger); background: var(--color-danger-bg);
+        .icon {color: var(--color-danger)}
+    }
+    .form-antispam-text {
+        display: flex; align-items: flex-start; gap: var(--space-xs); font-weight: var(--fw-medium); line-height: var(--lh-snug);
+        .icon {@include square(var(--icon-md)); margin-top: var(--space-3xs); color: var(--color-accent)}
+    }
+    .form-antispam-actions {display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-xs) var(--space-lg); padding-left: calc(var(--icon-md) + var(--space-xs))}
+}
+
+.form-antispam-link {
+    @include reset-button; min-height: var(--tap); color: var(--color-accent); font-weight: var(--fw-semibold); text-decoration: underline; text-decoration-thickness: var(--bw-sm); text-underline-offset: var(--underline-offset); transition: color var(--dur-fast);
+    &:hover {color: var(--color-accent-hover); text-decoration-thickness: var(--bw-md)}
+}
+
+.form-notes {display: grid; gap: var(--space-xs)}
+
+.form-legal {
+    display: flex; align-items: flex-start; gap: var(--space-xs); color: var(--color-text-muted); font-size: var(--fs-sm);
+    &.form-recaptcha {padding-left: calc(var(--icon-sm) + var(--space-xs))}
+    .icon {@include square(var(--icon-sm)); margin-top: var(--space-3xs)}
+    a {color: inherit; font-weight: var(--fw-semibold)}
+}
+
+// Google n'autorise à masquer le badge que si la mention reCAPTCHA est visible dans le formulaire.
+.has-recaptcha-notice .grecaptcha-badge {visibility: hidden}
+
+@keyframes spin {
+    to {transform: rotate(1turn)}
+}

@@ -1,0 +1,68 @@
+@use "variables" as *;
+@use "s4_mixin" as *;
+
+// Thèmes
+:root {color-scheme: light dark; @include custom-properties($theme-light)}
+:root[data-theme="light"] {color-scheme: light}
+:root[data-theme="dark"] {color-scheme: dark; @include custom-properties($theme-dark)}
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {@include custom-properties($theme-dark)}
+}
+// Sélecteurs aussi spécifiques que ceux des thèmes, pour s'appliquer aussi en sombre.
+@media (prefers-contrast: more) {
+    :root[data-theme], :root:not([data-theme]) {--color-text-muted: var(--color-text); --code-muted: var(--color-text); --color-border: var(--color-field-border); --color-border-strong: var(--color-text)}
+}
+
+// Base
+*, *::before, *::after {box-sizing: border-box}
+
+html {
+    background: var(--color-bg); color: var(--color-text); font-family: var(--font-sans); line-height: var(--lh-body); scroll-padding-top: calc(var(--header-offset) + var(--space-lg)); scroll-padding-bottom: calc(var(--consent-offset) + var(--focus-width) + var(--focus-offset)); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; @include text-size-adjust(100%);
+    @include motion {scroll-behavior: smooth}
+}
+
+body {min-height: 100vh; margin: 0; padding-bottom: var(--consent-offset); overflow-x: clip; font-size: var(--fs-body)}
+
+h1, h2, h3, h4 {margin: 0; font-family: var(--font-display); font-weight: var(--fw-bold); line-height: var(--lh-heading); letter-spacing: var(--ls-heading); text-wrap: balance}
+
+p, ul, ol, dl, dd, figure {margin: 0}
+
+p, li, dd {text-wrap: pretty}
+
+img, svg, picture {display: block; max-width: 100%}
+
+img {height: auto}
+
+a {
+    color: var(--color-accent); text-decoration-thickness: var(--bw-sm); text-underline-offset: var(--underline-offset); transition: color var(--dur-fast);
+    &:hover {color: var(--color-accent-hover); text-decoration-thickness: var(--bw-md)}
+}
+
+button, input, textarea, select {font: inherit; color: inherit}
+
+[hidden] {display: none !important}
+
+// Contenu réservé à la présence ou à l'absence de JavaScript (classe .js posée par templates/inline/theme.js).
+html:not(.js) .js-only, .js .no-js-only {display: none}
+
+:focus-visible {@include focus-ring}
+
+main:focus {outline: none}
+
+::selection {background: var(--color-brand); color: var(--color-on-brand)}
+
+// Utilitaires
+.visually-hidden {@include visually-hidden}
+
+.container {width: 100%; max-width: calc(var(--container) + 2 * var(--space-gutter)); margin-inline: auto; padding-inline: var(--space-gutter)}
+
+.icon {flex: none; fill: none; @include square(var(--icon-md))}
+
+.skip-link {
+    position: fixed; top: var(--space-sm); left: var(--space-sm); z-index: var(--z-skip); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-sm); background: var(--color-neutral); color: var(--color-on-neutral); font-weight: var(--fw-semibold); text-decoration: none; transform: translateY(-200%);
+    &:focus-visible {transform: none}
+}
+
+.tag {display: inline-block; padding: var(--space-3xs) var(--space-xs); border: var(--bw-sm) solid var(--color-border-strong); border-radius: var(--radius-pill); color: var(--color-text-muted); font-family: var(--font-sans); font-size: var(--fs-2xs); font-weight: var(--fw-semibold); line-height: var(--lh-snug); letter-spacing: var(--ls-small); vertical-align: .15em; white-space: nowrap}
+
+.minor-title {margin-bottom: var(--space-lg); color: var(--color-text-muted); font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: var(--fw-semibold); letter-spacing: var(--ls-small)}

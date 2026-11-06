@@ -1,0 +1,28 @@
+@use "../s4_mixin" as *;
+
+.button {
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--space-xs); min-height: var(--control-h); padding: var(--space-xs) var(--space-lg); border: var(--bw-sm) solid transparent; border-radius: var(--radius-pill); font-size: var(--fs-md); font-weight: var(--fw-semibold); line-height: var(--lh-heading); text-align: center; text-decoration: none; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background-color var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast), transform var(--dur-slow) var(--ease-spring);
+    &:active {transform: scale(var(--press-scale))}
+    &:disabled {cursor: not-allowed; transform: none}
+    &[aria-disabled="true"] {opacity: var(--opacity-disabled); cursor: progress}
+    &.button-primary {
+        background: var(--color-brand); color: var(--color-on-brand);
+        &:hover {background: var(--color-brand-hover); color: var(--color-on-brand)}
+        // Désactivé : neutre mais lisible (contraste AA dans les deux thèmes), sans effet au survol.
+        &:disabled {border-color: var(--color-border-strong); background: var(--color-fill-strong); color: var(--color-text-muted)}
+        @include hover {&:hover .icon:last-child {transform: translateX(var(--space-2xs))}}
+    }
+    &.button-secondary {
+        border-color: var(--color-border-strong); background: var(--color-surface); color: var(--color-text);
+        &:hover {border-color: var(--color-text-muted); background: var(--color-surface-muted); color: var(--color-text)}
+    }
+    .icon {@include square(var(--icon-md)); transition: transform var(--dur-slow) var(--ease-spring)}
+    @media (prefers-reduced-motion: reduce) {
+        &:active {transform: none}
+    }
+}
+
+.icon-button {
+    @include reset-button; display: inline-grid; place-items: center; @include square(var(--tap)); flex: none; border-radius: var(--radius-pill); color: var(--color-text-muted); transition: background-color var(--dur-fast), color var(--dur-fast);
+    &:hover {background: var(--color-fill); color: var(--color-text)}
+}

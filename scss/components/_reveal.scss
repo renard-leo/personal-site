@@ -1,0 +1,189 @@
+@use "../variables" as *;
+@use "../s4_mixin" as *;
+
+// Apparitions « du design au code » : motion.js pose .reveal-io sur la racine, puis .is-revealed sur chaque bloc [data-reveal]
+// qui entre dans l'écran. Les animations se jouent en entier et ne remplissent qu'en amont (backwards) : à la fin, les styles
+// normaux reprennent. Sans JS, en mouvement réduit ou en pause, aucune règle de reveal-scope ne s'applique.
+[data-reveal] > * {
+    @for $i from 2 through 7 {
+        &:nth-child(#{$i}) {--reveal-i: #{$i - 1}}
+    }
+    &:nth-child(n + 8) {--reveal-i: 7}
+}
+
+// Géométrie identique dans tous les états : l'animation ne modifie jamais la mise en page.
+[data-reveal="title"] {
+    .eyebrow, .section-title {position: relative; width: fit-content}
+}
+
+[data-reveal="heading"] {position: relative; width: fit-content}
+
+[data-reveal="paint"], [data-reveal="frame"] {position: relative}
+
+// Cartes et champs se révèlent un par un : motion.js les met en file et fixe --reveal-wait à partir de cet intervalle.
+[data-reveal="frame"] {--reveal-sequence: var(--frame-sequence)}
+[data-reveal="field"] {--reveal-sequence: var(--field-sequence)}
+
+@include reveal-scope {
+    // Titres de section : le repère « // profil » se tape, puis le titre se compile derrière un curseur.
+    [data-reveal="title"]:not(.is-revealed) {
+        .eyebrow, .section-title {clip-path: inset(0 100% 0 0)}
+    }
+    [data-reveal="title"].is-revealed {
+        --typed: calc(var(--chars) * var(--dur-type-char));
+        .eyebrow {animation: reveal-wipe var(--typed) steps(var(--chars), end) backwards}
+        .eyebrow::after {@include reveal-cursor(x, var(--typed), steps(var(--chars), end), 0s)}
+        .section-title {animation: reveal-wipe var(--dur-wipe) var(--ease-out) var(--typed) backwards}
+        .section-title::after {@include reveal-cursor(x, var(--dur-wipe), var(--ease-out), var(--typed))}
+    }
+
+    // Intertitres : la même compilation, sans repère.
+    [data-reveal="heading"]:not(.is-revealed) {clip-path: inset(0 100% 0 0)}
+    [data-reveal="heading"].is-revealed {
+        animation: reveal-wipe var(--dur-wipe) var(--ease-out) backwards;
+        &::after {@include reveal-cursor(x, var(--dur-wipe), var(--ease-out), 0s)}
+    }
+
+    // Paragraphes : rendus ligne après ligne, sous une ligne de balayage.
+    [data-reveal="paint"]:not(.is-revealed) {clip-path: inset(0 0 100% 0)}
+    [data-reveal="paint"].is-revealed {
+        animation: reveal-raster var(--dur-raster) var(--ease-out) backwards;
+        &::after {@include reveal-cursor(y, var(--dur-raster), var(--ease-out), 0s)}
+    }
+
+    // Listes : chaque puce s'insère comme un calque, puis son libellé se peint.
+    [data-reveal="list"]:not(.is-revealed) > li {
+        clip-path: inset(0 100% 0 0);
+        &::before {transform: scale(0)}
+    }
+    [data-reveal="list"].is-revealed > li {
+        --item-at: calc(var(--reveal-i, 0) * var(--reveal-step));
+        animation: reveal-wipe var(--dur-wipe) var(--ease-out) var(--item-at) backwards;
+        &::before {animation: reveal-pop var(--dur-pop) var(--ease-pop) var(--item-at) backwards}
+    }
+
+    // Cartes : le contour se trace comme un cadre d'outil de design, puis la surface et le contenu se peignent.
+    [data-reveal="frame"]:not(.is-revealed) {
+        background-color: transparent; border-color: transparent; box-shadow: none;
+        &::before {transform: scaleX(0)}
+        > :not(form) {clip-path: inset(0 100% 0 0)}
+    }
+    [data-reveal="frame"].is-revealed {
+        --frame-at: var(--reveal-wait, 0s); --paint-at: calc(var(--frame-at) + var(--dur-trace) / 3);
+        animation: frame-fill var(--dur-wipe) linear var(--paint-at) backwards;
+        &::after {content: ""; position: absolute; inset: calc(-1 * var(--bw-sm)); border: var(--bw-md) solid var(--color-accent); border-radius: inherit; opacity: 0; pointer-events: none; animation: frame-trace var(--dur-trace) linear var(--frame-at) both}
+        &::before {transform-origin: left; animation: reveal-bar var(--dur-wipe) var(--ease-out) calc(var(--frame-at) + var(--dur-trace) / 2) backwards}
+        > :not(form) {animation: reveal-wipe var(--dur-wipe) var(--ease-out) var(--paint-at) backwards}
+    }
+
+    // competences.json : une passe de coloration syntaxique descend ligne par ligne, comme dans un éditeur.
+    [data-reveal="syntax"]:not(.is-revealed) {
+        .tok-string, .skill-title {color: var(--code-text)}
+    }
+    [data-reveal="syntax"].is-revealed {
+        .code-line {--line-at: calc(var(--line, 0) * var(--syntax-step))}
+        .tok-string, .skill-title {animation: syntax-color var(--dur-syntax) var(--ease-out) var(--line-at) backwards}
+        .code-line::after {content: ""; position: absolute; inset: 0 calc(-1 * var(--space-lg)) 0 0; background: var(--color-fill-strong); box-shadow: inset var(--bw-lg) 0 0 var(--color-accent); opacity: 0; pointer-events: none; animation: syntax-line calc(3 * var(--syntax-step)) linear var(--line-at) both}
+    }
+
+    // Parcours : un graphe de commits. Le nœud apparaît, le message s'écrit à côté, puis la branche descend vers le suivant.
+    [data-reveal="graph"]:not(.is-revealed) {
+        &::before, &::after {transform: scaleY(0)}
+        .logo-tile, .degree::before {transform: scale(0)}
+        .experience-heading, .positions, .missions, .degree > * {clip-path: inset(0 100% 0 0)}
+    }
+    [data-reveal="graph"].is-revealed {
+        &::before, &::after {transform-origin: top; animation: reveal-rail var(--dur-rail) var(--ease-out) calc(3 * var(--graph-lag)) backwards}
+        .logo-tile, .degree::before {animation: reveal-pop var(--dur-pop) var(--ease-pop) backwards}
+        .experience-heading, .degree > * {animation: reveal-commit var(--dur-wipe) var(--ease-out) var(--graph-lag) backwards}
+        .positions {animation: reveal-commit var(--dur-wipe) var(--ease-out) calc(2 * var(--graph-lag)) backwards}
+        .missions {animation: reveal-commit var(--dur-wipe) var(--ease-out) calc(3 * var(--graph-lag)) backwards}
+    }
+
+    // Formulaire : champ après champ, la bordure se trace en orange puis reprend sa couleur ; le bouton se peint en dernier.
+    [data-reveal="field"]:not(.is-revealed) {
+        .field-label, .field-hint, .field-input, .form-submit {clip-path: inset(0 100% 0 0)}
+    }
+    [data-reveal="field"].is-revealed {
+        --field-at: calc(var(--field-delay) + var(--reveal-wait, 0s));
+        .field-label, .field-hint, .form-submit {animation: reveal-wipe var(--dur-wipe) var(--ease-out) var(--field-at) backwards}
+        .field-input {animation: field-stroke var(--dur-trace) var(--ease-out) var(--field-at) backwards}
+    }
+}
+
+@keyframes reveal-wipe {
+    from {clip-path: inset(0 100% 0 0)}
+    to {clip-path: inset(0)}
+}
+
+@keyframes reveal-raster {
+    from {clip-path: inset(0 0 100% 0)}
+    to {clip-path: inset(0)}
+}
+
+@keyframes reveal-caret {
+    from {opacity: 1; transform: translateX(0)}
+    to {opacity: 1; transform: translateX(100%)}
+}
+
+@keyframes reveal-scan {
+    from {opacity: 1; transform: translateY(0)}
+    to {opacity: 1; transform: translateY(100%)}
+}
+
+@keyframes reveal-fade-x {
+    from {opacity: 1; transform: translateX(100%)}
+    to {opacity: 0; transform: translateX(100%)}
+}
+
+@keyframes reveal-fade-y {
+    from {opacity: 1; transform: translateY(100%)}
+    to {opacity: 0; transform: translateY(100%)}
+}
+
+@keyframes reveal-pop {
+    from {transform: scale(0)}
+}
+
+@keyframes reveal-bar {
+    from {transform: scaleX(0)}
+}
+
+@keyframes reveal-rail {
+    from {transform: scaleY(0)}
+}
+
+@keyframes reveal-commit {
+    from {clip-path: inset(0 100% 0 0); transform: translateX(calc(-1 * var(--wipe-shift)))}
+    to {clip-path: inset(0); transform: none}
+}
+
+@keyframes frame-fill {
+    from {background-color: transparent; border-color: transparent; box-shadow: none}
+}
+
+// Le cadre se trace dans le sens des aiguilles d'une montre depuis le coin haut gauche, reste un instant, puis s'efface.
+@keyframes frame-trace {
+    0% {opacity: 1; clip-path: polygon(50% 50%, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0)}
+    12% {clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 0, 100% 0, 100% 0, 100% 0)}
+    24% {clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 100% 100%, 100% 100%, 100% 100%)}
+    36% {clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 100%, 0 100%)}
+    48%, 78% {opacity: 1; clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 0, 0 0)}
+    100% {opacity: 0; clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 0, 0 0)}
+}
+
+@keyframes field-stroke {
+    0% {clip-path: inset(0 100% 0 0); border-color: var(--color-accent)}
+    55% {clip-path: inset(0); border-color: var(--color-accent)}
+    100% {clip-path: inset(0)}
+}
+
+@keyframes syntax-color {
+    from {color: var(--code-text)}
+}
+
+@keyframes syntax-line {
+    0% {opacity: 0}
+    15%, 60% {opacity: 1}
+    100% {opacity: 0}
+}

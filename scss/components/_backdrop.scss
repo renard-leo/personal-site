@@ -1,0 +1,59 @@
+@use "../variables" as *;
+@use "../s4_mixin" as *;
+
+// Fond du site : grille de points d'un plan de travail et lueurs qui dérivent. Calques dédiés, transform et opacity uniquement.
+.backdrop {
+    position: fixed; inset: 0; z-index: var(--z-backdrop); overflow: hidden; pointer-events: none; contain: strict;
+    .backdrop-glows {position: absolute; inset: 0}
+    .backdrop-glow {
+        position: absolute; @include square(var(--glow-size));
+        span {
+            display: block; @include square(100%); border-radius: var(--radius-round); background: radial-gradient(closest-side, var(--glow-color), transparent);
+            @include ambient {animation: glow-drift var(--dur-drift) ease-in-out infinite alternate}
+        }
+    }
+    .backdrop-glow-fox {--glow-color: var(--glow-fox); top: calc(var(--glow-size) / -3); right: calc(var(--glow-size) / -4)}
+    .backdrop-glow-night {
+        --glow-color: var(--glow-night); top: calc(50% - var(--glow-size) / 3); left: calc(var(--glow-size) / -2.5);
+        span {@include ambient {animation-duration: var(--dur-drift-alt); animation-direction: alternate-reverse}}
+    }
+    .backdrop-glow-ember {--glow-color: var(--glow-ember); bottom: calc(var(--glow-size) / -1.8); left: calc(50% - var(--glow-size) / 2); opacity: 0}
+    .backdrop-dots {position: absolute; inset: 0; background-image: radial-gradient(circle, var(--canvas-dot) var(--canvas-dot-r), transparent calc(var(--canvas-dot-r) * 1.5)); background-size: var(--canvas-grid) var(--canvas-grid)}
+    @include opaque {display: none}
+}
+
+// Les lueurs changent de place et de teinte au fil des sections : orange en haut, bleu nuit au milieu, braise vers le contact.
+@include scroll-driven {
+    .backdrop {
+        .backdrop-glow {animation: linear both; animation-timeline: scroll(root)}
+        .backdrop-glow-fox {animation-name: glow-scroll-fox}
+        .backdrop-glow-night {animation-name: glow-scroll-night}
+        .backdrop-glow-ember {animation-name: glow-scroll-ember}
+    }
+}
+
+.backdrop {
+    .backdrop-glow, .backdrop-glow span {@include paused {animation-play-state: paused}}
+}
+
+@keyframes glow-drift {
+    from {transform: translate3d(0, 0, 0) scale(1)}
+    to {transform: translate3d(var(--glow-drift-x), var(--glow-drift-y), 0) scale(var(--glow-scale))}
+}
+
+@keyframes glow-scroll-fox {
+    0% {opacity: 1; transform: none}
+    45% {opacity: .3; transform: translate3d(calc(var(--glow-drift-x) * -1.5), var(--glow-shift), 0)}
+    100% {opacity: .6; transform: translate3d(calc(var(--glow-drift-x) * -4), calc(var(--glow-shift) * 2), 0)}
+}
+
+@keyframes glow-scroll-night {
+    0% {opacity: .35; transform: none}
+    40%, 70% {opacity: 1; transform: translate3d(var(--glow-drift-x), var(--glow-shift), 0)}
+    100% {opacity: .45; transform: translate3d(calc(var(--glow-drift-x) * 2), calc(var(--glow-shift) * 2), 0)}
+}
+
+@keyframes glow-scroll-ember {
+    0%, 60% {opacity: 0; transform: translate3d(0, calc(var(--glow-shift) * -1), 0)}
+    100% {opacity: 1; transform: none}
+}

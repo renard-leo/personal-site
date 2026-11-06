@@ -1,0 +1,108 @@
+@use "../variables" as *;
+@use "../s4_mixin" as *;
+
+.hero-classic {
+    padding-block: var(--space-xl) var(--space-2xl);
+    .hero-grid {
+        display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2xl); align-items: center;
+        @include mq($bp-md) {grid-template-columns: minmax(0, 1fr) var(--hero-photo-md); gap: var(--space-gap)}
+        @include mq($bp-lg) {grid-template-columns: minmax(0, 1fr) var(--hero-photo-lg)}
+    }
+    @include mq($bp-md) {padding-top: var(--space-3xl)}
+}
+
+.hero-text {display: flex; flex-direction: column; align-items: flex-start}
+
+.hero-status {
+    display: inline-flex; align-items: center; gap: var(--space-xs); padding: var(--space-2xs) var(--space-md) var(--space-2xs) var(--space-sm); border: var(--bw-sm) solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); color: var(--color-text-muted); font-size: var(--fs-sm); font-weight: var(--fw-medium); line-height: var(--lh-snug); box-shadow: var(--shadow-sm);
+    .status-dot {
+        position: relative; flex: none; @include square(var(--dot-size)); border-radius: var(--radius-round); background: var(--color-success);
+        &::after {content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--color-success); opacity: 0}
+        @include motion {&::after {animation: status-pulse var(--dur-pulse) var(--ease-out) var(--dur-slow) var(--pulse-count)}}
+    }
+}
+
+.hero-title {margin-top: var(--space-lg); font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--ls-display)}
+
+.hero-role {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2xs) var(--space-sm); margin-top: var(--space-md); font-size: var(--fs-xl); line-height: var(--lh-snug); letter-spacing: var(--ls-title);
+    .hero-role-title {font-weight: var(--fw-semibold)}
+    .hero-role-years {
+        display: inline-flex; align-items: center; gap: var(--space-sm); color: var(--color-text-muted);
+        &::before {content: ""; @include square(var(--dot-size)); border-radius: var(--radius-round); background: var(--color-brand)}
+    }
+}
+
+.hero-lead {max-width: var(--measure); margin-top: var(--space-lg); color: var(--color-text-muted); font-size: var(--fs-lg)}
+
+.hero-actions {display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-xl)}
+
+.hero-facts {
+    display: flex; flex-wrap: wrap; gap: var(--space-xs) var(--space-lg); margin-top: var(--space-xl); color: var(--color-text-muted); font-size: var(--fs-sm);
+    .hero-fact {display: flex; align-items: center; gap: var(--space-xs)}
+    dt {color: var(--color-accent)}
+    .icon {@include square(var(--icon-sm))}
+}
+
+.hero-media {
+    position: relative; order: -1; width: min(var(--hero-photo-sm), 100%);
+    @include mq($bp-md) {order: 0; width: 100%}
+}
+
+.hero-photo {
+    display: block; overflow: hidden; aspect-ratio: 4 / 5; border-radius: var(--radius-xl); background: var(--color-bg-alt); box-shadow: var(--shadow-lg);
+    img {@include square(100%); object-fit: cover}
+}
+
+.hero-code {
+    display: none;
+    // Ne déborde que sur la gouttière, jamais sur le texte (zoom, espacement du texte).
+    @include mq($bp-lg) {display: block; position: absolute; bottom: var(--space-2xl); left: calc(-1 * var(--space-gap)); max-width: var(--hero-code-w)}
+}
+
+@keyframes status-pulse {
+    from {opacity: .5; transform: scale(1)}
+    to {opacity: 0; transform: scale(var(--pulse-scale))}
+}
+
+// Profondeur au défilement : la photo et le code s'éloignent à des vitesses différentes.
+@include scroll-driven {
+    .hero-photo {animation: drift-photo linear both; animation-timeline: view(); animation-range: exit 0% exit 100%}
+    .hero-code {animation: drift-code linear both; animation-timeline: view(); animation-range: exit 0% exit 100%}
+}
+
+@keyframes drift-photo {
+    to {transform: translateY(var(--drift-photo))}
+}
+
+@keyframes drift-code {
+    to {transform: translateY(var(--drift-code))}
+}
+
+.hero-code {
+    .code-line {white-space: pre}
+    .code-line-text {display: inline-block}
+    .code-caret {display: inline-block; width: var(--caret-w); height: var(--caret-h); margin-left: var(--space-3xs); background: var(--color-brand); vertical-align: text-bottom}
+}
+
+// Frappe du code : le texte complet est dans le DOM, seule sa révélation est animée.
+@include motion {
+    .hero-code {
+        .code-line-text {animation: type-line calc(var(--chars) * var(--type-speed)) steps(var(--chars), end) calc(var(--type-delay) + var(--start) * var(--type-speed)) both}
+        .code-caret {--caret-delay: calc(var(--type-delay) + (var(--start) + var(--chars)) * var(--type-speed)); animation: caret-show 1ms var(--caret-delay) both, caret-blink var(--dur-blink) steps(1) var(--caret-delay) var(--blink-count)}
+    }
+}
+
+@keyframes type-line {
+    from {clip-path: inset(0 100% 0 0)}
+    to {clip-path: inset(0)}
+}
+
+@keyframes caret-show {
+    from {opacity: 0}
+    to {opacity: 1}
+}
+
+@keyframes caret-blink {
+    50% {opacity: 0}
+}

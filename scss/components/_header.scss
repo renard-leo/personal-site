@@ -1,0 +1,94 @@
+@use "../variables" as *;
+@use "../s4_mixin" as *;
+
+.site-header {
+    position: sticky; top: 0; z-index: var(--z-header); height: var(--header-h); pointer-events: none; view-transition-name: site-header;
+    &::before {content: ""; position: absolute; inset: 0; z-index: -1; border-bottom: var(--bw-sm) solid var(--color-border); transform-origin: top; @include glass}
+    .header-bar {display: flex; align-items: center; gap: var(--space-xs); height: 100%; transform-origin: left center}
+    .header-bar > * {pointer-events: auto}
+}
+
+.brand {
+    display: inline-flex; align-items: center; gap: var(--space-sm); min-height: var(--tap); margin-right: auto; border-radius: var(--radius-sm); color: var(--color-text); font-weight: var(--fw-semibold); letter-spacing: var(--ls-title); text-decoration: none;
+    &:hover {color: var(--color-text)}
+    .brand-logo {@include square(var(--logo-size)); transform-origin: left center}
+}
+
+.site-nav {
+    display: flex; align-items: center;
+    .nav-toggle {
+        @include reset-button; display: inline-flex; align-items: center; gap: var(--space-xs); min-height: var(--tap); padding-inline: var(--space-sm) var(--space-md); border-radius: var(--radius-pill); color: var(--color-text); font-size: var(--fs-sm); font-weight: var(--fw-semibold);
+        &:hover {background: var(--color-fill)}
+        @include mq($bp-md) {display: none}
+    }
+    .nav-list {
+        @include reset-list; position: fixed; inset: calc(var(--header-h) - var(--space-xs)) var(--space-gutter) auto auto; width: min(var(--menu-w), calc(100vw - 2 * var(--space-gutter))); height: auto; max-height: calc(100dvh - var(--header-h)); margin: 0; padding: var(--space-xs); overflow-y: auto; border: var(--bw-sm) solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-lg);
+        &:popover-open {display: grid; @include motion {animation: menu-in var(--dur-base) var(--ease-out)}}
+        @include mq($bp-md) {position: static; display: flex; gap: var(--space-3xs); width: auto; max-height: none; padding: 0; border: 0; background: none; box-shadow: none; overflow: visible}
+    }
+    .nav-link {
+        display: flex; align-items: center; min-height: var(--control-h); padding-inline: var(--space-md); border-radius: var(--radius-md); color: var(--color-text); font-size: var(--fs-lg); font-weight: var(--fw-medium); text-decoration: none; transition: color var(--dur-fast), background-color var(--dur-fast);
+        &:hover {background: var(--color-fill); color: var(--color-text)}
+        &[aria-current="true"] {background: var(--color-fill); color: var(--color-text); text-decoration: underline; text-decoration-color: var(--color-accent); text-decoration-thickness: var(--bw-md); text-underline-offset: var(--underline-offset)}
+        @include mq($bp-md) {min-height: var(--tap); padding-inline: var(--space-sm); border-radius: var(--radius-pill); color: var(--color-text-muted); font-size: var(--fs-sm)}
+    }
+}
+
+.theme-toggle {
+    .icon-sun {display: none}
+    @include dark {
+        .icon-sun {display: block}
+        .icon-moon {display: none}
+    }
+}
+
+// Sans mouvement, rien ne bouge seul : le bouton pause n'a plus d'objet.
+.motion-toggle {
+    .icon-play {display: none}
+    @include paused {
+        .icon-play {display: block}
+        .icon-pause {display: none}
+    }
+    @media (prefers-reduced-motion: reduce) {display: none}
+}
+
+html:not(.js) {
+    .theme-toggle, .motion-toggle {display: none}
+}
+
+@supports not selector(:popover-open) {
+    .site-nav {
+        .nav-toggle {display: none}
+        .nav-list {position: static; display: flex; width: auto; padding: 0; border: 0; background: none; box-shadow: none; overflow-x: auto}
+        .nav-link {min-height: var(--tap); padding-inline: var(--space-xs); font-size: var(--fs-sm)}
+    }
+}
+
+@keyframes menu-in {
+    from {opacity: 0; transform: translateY(calc(-1 * var(--space-xs))) scale(var(--press-scale))}
+}
+
+// En-tête qui se compacte au défilement : verre transparent en haut de page, puis réduit.
+@supports (animation-timeline: scroll()) {
+    @media screen and (prefers-reduced-motion: no-preference) {
+        :root {--header-h: var(--header-h-tall); --header-offset: var(--header-h-compact)}
+        .site-header {
+            &::before {animation: header-glass linear both; animation-timeline: scroll(root); animation-range: 0 var(--header-compact-distance)}
+            .header-bar {animation: header-bar linear both; animation-timeline: scroll(root); animation-range: 0 var(--header-compact-distance)}
+            .brand-logo {animation: header-logo linear both; animation-timeline: scroll(root); animation-range: 0 var(--header-compact-distance)}
+        }
+    }
+}
+
+@keyframes header-glass {
+    from {opacity: 0; transform: none}
+    to {opacity: 1; transform: scaleY(var(--header-compact-ratio))}
+}
+
+@keyframes header-bar {
+    to {transform: translateY(var(--header-compact-shift))}
+}
+
+@keyframes header-logo {
+    to {transform: scale(var(--header-compact-scale))}
+}

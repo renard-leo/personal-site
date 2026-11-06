@@ -1,0 +1,42 @@
+@use "../variables" as *;
+@use "../s4_mixin" as *;
+
+.profile-grid {
+    display: grid; gap: var(--space-2xl);
+    @include mq($bp-lg) {grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: var(--space-gap); align-items: start}
+}
+
+.profile-story {display: flex; flex-direction: column; gap: var(--space-lg); max-width: var(--container-prose)}
+
+.profile-lead {font-size: var(--fs-xl); line-height: var(--lh-snug); letter-spacing: var(--ls-title)}
+
+.profile-text {color: var(--color-text-muted); font-size: var(--fs-lg)}
+
+
+.project-types {
+    @include reset-list; border-top: var(--bw-sm) solid var(--color-border);
+    li {
+        display: flex; align-items: center; gap: var(--space-sm); padding-block: var(--space-sm); border-bottom: var(--bw-sm) solid var(--color-border); font-size: var(--fs-lg); font-weight: var(--fw-medium);
+        &::before {content: ""; flex: none; @include square(var(--dot-size)); border-radius: var(--radius-round); background: var(--color-brand)}
+    }
+}
+
+.qualities {
+    @include reset-list; display: grid; gap: var(--space-md);
+    @include mq($bp-md) {grid-template-columns: repeat(2, minmax(0, 1fr))}
+    @include mq($bp-lg) {grid-template-columns: repeat(6, minmax(0, 1fr))}
+}
+
+.quality {
+    display: flex; flex-direction: column; gap: var(--space-xs); padding: var(--space-xl) var(--space-lg); border: var(--bw-sm) solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface);
+    &::before {content: ""; width: var(--space-lg); height: var(--bw-lg); margin-bottom: var(--space-xs); border-radius: var(--radius-pill); background: var(--color-brand)}
+    .quality-title {font-size: var(--fs-lg); letter-spacing: var(--ls-title)}
+    .quality-text {color: var(--color-text-muted)}
+    @include mq($bp-md) {
+        &:last-child {grid-column: 1 / -1}
+    }
+    @include mq($bp-lg) {
+        grid-column: span 2;
+        &:nth-child(n + 4) {grid-column: span 3}
+    }
+}

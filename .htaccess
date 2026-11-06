@@ -1,0 +1,6 @@
+# En production, faire pointer la racine du site sur public/ ; ce fichier sert de repli (WAMP, hébergement sans choix de racine).
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule (^|/)(\.claude|\.mcp\.json|CLAUDE\.md|CLAUDE\.local\.md)(/|$) - [F,L]
+    RewriteRule ^(?!public/)(.*)$ public/$1 [L]
+</IfModule>

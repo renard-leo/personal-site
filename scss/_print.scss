@@ -1,0 +1,61 @@
+@use "variables" as *;
+@use "s4_mixin" as *;
+
+@media print {
+    @page {margin: 1.5cm}
+
+    :root, :root[data-theme] {color-scheme: light; @include custom-properties($theme-print); --space-section: var(--space-xl); --fs-display: var(--fs-3xl); --fs-3xl: var(--fs-2xl)}
+
+    html {font-size: 80%}
+
+    body {background: none}
+
+    .skip-link, .site-header, #cc-main, .hero-actions, .hero-code, .status-dot, .contact-card, .footer-links, .icon-sprite {display: none !important}
+
+    *, *::before, *::after {animation: none !important; transition: none !important; box-shadow: none !important}
+
+    .section, .hero {padding-block: var(--space-lg); break-inside: auto}
+
+    .hero {
+        .hero-grid {grid-template-columns: minmax(0, 1fr) var(--hero-photo-print); gap: var(--space-xl)}
+        .hero-media {order: 0; width: 100%}
+        .hero-status {border: 0; padding: 0}
+    }
+
+    .backdrop, .studio-rulers, .studio-overlay, .studio-columns, .studio-statusbar, .studio-actions, .studio-comment-pin, .studio-photo::before {display: none !important}
+
+    .hero-studio {
+        min-height: 0;
+        .studio-name {font-size: var(--fs-display)}
+        .studio-portrait {width: var(--hero-photo-print)}
+        .studio-comment {margin: var(--space-md) 0 0}
+        .studio-comment-body {padding: 0; border: 0}
+    }
+
+    .section-head {margin-bottom: var(--space-md); break-inside: avoid; break-after: avoid}
+
+    h2, h3, h4 {break-after: avoid}
+
+    .quality, .experience, .degree, .position, .code-window {break-inside: avoid}
+
+    .qualities {grid-template-columns: repeat(2, minmax(0, 1fr))}
+
+    .quality, .quality:nth-child(n), .quality:last-child {grid-column: auto; padding: var(--space-sm) 0; border: 0}
+
+    .career-grid, .profile-grid, .contact-grid, .legal-grid {display: block}
+
+    .career-column + .career-column, .profile-projects {margin-top: var(--space-xl)}
+
+    .missions {
+        padding-left: var(--space-lg); list-style: disc;
+        li {padding-left: 0; &::before {display: none}}
+    }
+
+    .contact-link {border: 0; padding: 0; min-height: 0}
+
+    .contact-link::after, .prose a[href^="http"]::after {content: " (" attr(href) ")"; color: var(--color-text-muted); font-weight: var(--fw-regular)}
+
+    .contact-link .icon-trailing, .legal-toc, .contact-links li:has(> .contact-link-download) {display: none}
+
+    .site-footer {border: 0; padding: 0}
+}
