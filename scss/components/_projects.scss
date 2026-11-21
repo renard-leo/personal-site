@@ -1,0 +1,119 @@
+@use "../variables" as *;
+@use "../s4_mixin" as *;
+
+// « 2026 · Conception et développement », sur les cartes et en tête de page.
+.project-meta {
+    display: flex; flex-wrap: wrap; gap: 0 var(--space-xs); color: var(--color-text-muted); font-family: var(--font-mono); font-size: var(--fs-sm); line-height: var(--lh-snug);
+    span + span::before {content: "·"; content: "·" / ""; margin-right: var(--space-xs)}
+}
+
+// Accueil
+.project-cards {
+    @include reset-list; display: grid; gap: var(--space-lg);
+    @include mq($bp-md) {grid-template-columns: repeat(2, minmax(0, 1fr))}
+}
+
+.project-card {
+    position: relative; display: flex; flex-direction: column; overflow: hidden; border: var(--bw-sm) solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); box-shadow: var(--shadow-sm); transition: border-color var(--dur-fast), box-shadow var(--dur-base);
+    &:hover {border-color: var(--color-border-strong); box-shadow: var(--shadow-md)}
+    .project-card-media img {width: 100%; aspect-ratio: var(--ratio-media); object-fit: cover; border-bottom: var(--bw-sm) solid var(--color-border)}
+    .project-card-body {display: flex; flex: 1; flex-direction: column; gap: var(--space-xs); padding: var(--space-lg)}
+    .project-card-title {font-size: var(--fs-xl); letter-spacing: var(--ls-title)}
+    .project-card-link {
+        color: inherit; text-decoration: none; transition: color var(--dur-fast);
+        // Toute la carte mène à la page du projet.
+        &::after {content: ""; position: absolute; inset: 0; border-radius: inherit}
+    }
+    .project-card-summary {color: var(--color-text-muted)}
+    .project-card-stack {margin-top: auto; padding-top: var(--space-sm)}
+    @include hover {
+        &:hover .project-card-link {color: var(--color-accent)}
+    }
+    // Le contour de focus entoure la carte entière là où :has() existe, sinon il reste sur le titre.
+    @supports selector(:has(*)) {
+        &:has(.project-card-link:focus-visible) {@include focus-ring}
+        .project-card-link:focus-visible {outline: none}
+    }
+}
+
+// Page d'un projet
+.project-head {
+    max-width: var(--container-prose);
+    .project-lead {margin-top: var(--space-md); font-size: var(--fs-xl); line-height: var(--lh-snug); letter-spacing: var(--ls-title)}
+    .project-meta {margin-top: var(--space-md)}
+}
+
+.project-media {
+    margin-bottom: var(--space-3xl);
+    img {width: 100%; aspect-ratio: var(--ratio-media); object-fit: cover; border: var(--bw-sm) solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg)}
+}
+
+.project-layout {
+    display: grid; gap: var(--space-2xl);
+    @include mq($bp-lg) {grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: var(--space-gap); align-items: start}
+}
+
+.project-body {display: flex; flex-direction: column; gap: var(--space-md); max-width: var(--container-prose)}
+
+.project-text {color: var(--color-text-muted); font-size: var(--fs-lg)}
+
+.project-subtitle {margin-top: var(--space-xl); font-size: var(--fs-2xl)}
+
+.project-steps {@include reset-list; display: grid; gap: var(--space-xl); counter-reset: step}
+
+.project-step {
+    position: relative; padding-left: var(--space-2xl); counter-increment: step;
+    // Numéro centré sur la première ligne du titre.
+    &::before {content: counter(step, decimal-leading-zero); content: counter(step, decimal-leading-zero) / ""; position: absolute; top: 0; left: 0; color: var(--color-accent); font-family: var(--font-mono); font-size: var(--fs-sm); font-weight: var(--fw-semibold); line-height: calc(var(--fs-lg) * var(--lh-heading))}
+    .project-step-title {font-size: var(--fs-lg); letter-spacing: var(--ls-title)}
+    .project-step-text {margin-top: var(--space-xs); color: var(--color-text-muted)}
+    .project-step-media {
+        margin-top: var(--space-md);
+        img {width: 100%; aspect-ratio: var(--ratio-media); object-fit: cover; border: var(--bw-sm) solid var(--color-border); border-radius: var(--radius-md); box-shadow: var(--shadow-sm)}
+    }
+    .project-step-caption {margin-top: var(--space-xs); color: var(--color-text-muted); font-size: var(--fs-sm); line-height: var(--lh-snug)}
+    a {font-weight: var(--fw-semibold)}
+}
+
+.project-highlights {
+    @include reset-list; display: grid; gap: var(--space-sm);
+    li {
+        position: relative; padding-left: var(--space-lg);
+        &::before {content: ""; position: absolute; top: calc(var(--lh-body) * .5em - var(--dot-size) / 2); left: 0; @include square(var(--dot-size)); border-radius: var(--radius-round); background: var(--color-brand)}
+    }
+}
+
+.project-aside {
+    @include mq($bp-lg) {position: sticky; top: calc(var(--header-offset) + var(--space-xl))}
+}
+
+.project-pager {
+    margin-top: var(--space-4xl); padding-top: var(--space-2xl); border-top: var(--bw-sm) solid var(--color-border);
+    ul {
+        @include reset-list; display: grid; gap: var(--space-md);
+        @include mq($bp-md) {grid-template-columns: repeat(2, minmax(0, 1fr))}
+    }
+}
+
+.project-pager-link {
+    --icon-space: calc(var(--space-lg) + var(--icon-md) + var(--space-sm));
+    position: relative; display: flex; flex-direction: column; gap: var(--space-3xs); height: 100%; padding: var(--space-lg) var(--icon-space) var(--space-lg) var(--space-lg); border: var(--bw-sm) solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); color: var(--color-text); text-decoration: none; transition: border-color var(--dur-fast);
+    &:hover {border-color: var(--color-brand); color: var(--color-text)}
+    .project-pager-label {color: var(--color-text-muted); font-size: var(--fs-sm)}
+    .project-pager-title {font-family: var(--font-display); font-size: var(--fs-lg); font-weight: var(--fw-bold); line-height: var(--lh-heading); letter-spacing: var(--ls-title)}
+    .project-pager-icon {position: absolute; top: 50%; right: var(--space-lg); color: var(--color-accent); transform: translateY(-50%)}
+}
+
+.project-pager-prev {
+    .project-pager-link {padding: var(--space-lg) var(--space-lg) var(--space-lg) var(--icon-space)}
+    .project-pager-icon {right: auto; left: var(--space-lg); transform: translateY(-50%) scaleX(-1)}
+}
+
+.project-pager-next {
+    text-align: right;
+    @include mq($bp-md) {grid-column: 2}
+}
+
+@media (forced-colors: active) {
+    .project-highlights li::before {forced-color-adjust: none; background: CanvasText}
+}

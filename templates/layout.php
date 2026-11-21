@@ -3,12 +3,13 @@
 declare(strict_types=1);
 
 /**
- * @var array $page title, description, path, scripts
+ * @var array $page title, description, path, scripts, image (path et alt d'une image de partage 1200 × 630)
  * @var string $main
  */
 
 $canonical = absolute_url($page['path']);
-$ogImage = absolute_url('assets/img/og-image.jpg');
+$shareImage = $page['image'] ?? ['path' => 'assets/img/og-image.jpg', 'alt' => 'Portrait de ' . full_name()];
+$ogImage = absolute_url($shareImage['path']);
 [$city, $region] = split_location(content('identity.location'));
 
 $person = array_filter([
@@ -52,7 +53,7 @@ $person = array_filter([
     <meta property="og:image" content="<?= e($ogImage) ?>">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="<?= e('Portrait de ' . full_name()) ?>">
+    <meta property="og:image:alt" content="<?= t($shareImage['alt']) ?>">
     <meta property="profile:first_name" content="<?= e(content('identity.firstName')) ?>">
     <meta property="profile:last_name" content="<?= e(content('identity.lastName')) ?>">
     <meta name="twitter:card" content="summary_large_image">

@@ -9,8 +9,16 @@ public/assets/js/
 public/assets/vendor/
 public/assets/img/leo-renard-*
 public/assets/img/og-image.jpg
+public/assets/img/projects/
 public/assets/img/logo.svg
 public/favicon.svg
+config/build.php
+
+# Généré par npm run export
+/export/
+
+# Adresses de préprod, propres à chaque machine
+.env.preprod
 
 # Générés par PHP au premier appel
 public/robots.txt

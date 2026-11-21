@@ -1,0 +1,278 @@
+{
+    "lang": "fr",
+    "locale": "fr-FR",
+    "loader": {
+        "label": "Allumage du bureau…",
+        "skip": "Appuyez sur une touche pour passer l’intro"
+    },
+    "hud": {
+        "home": "Vue d’ensemble",
+        "back": "Retour",
+        "sound": "Son",
+        "theme": "Jour / nuit",
+        "help": "Raccourcis clavier",
+        "simple": "Version simple",
+        "skip": "Passer l’intro"
+    },
+    "nav": {
+        "label": "Objets du bureau",
+        "objects": {
+            "screen": {
+                "name": "Écran principal",
+                "hint": "lire le contenu affiché"
+            },
+            "frame": {
+                "name": "Cadre photo",
+                "hint": "afficher mon profil"
+            },
+            "terminal": {
+                "name": "Second écran",
+                "hint": "ouvrir le terminal"
+            },
+            "tower": {
+                "name": "Tour du PC",
+                "hint": "voir la configuration"
+            },
+            "lamp": {
+                "name": "Lampe de bureau",
+                "hint": "basculer jour / nuit"
+            },
+            "phone": {
+                "name": "Smartphone",
+                "hint": "me contacter"
+            },
+            "printer": {
+                "name": "Imprimante",
+                "hint": "télécharger mon CV"
+            },
+            "project": {
+                "hint": "voir le projet"
+            }
+        }
+    },
+    "hints": {
+        "overview": "Tab ou flèches pour explorer · Entrée pour ouvrir",
+        "overviewTouch": "Glissez pour explorer, touchez pour ouvrir",
+        "shelves": "← → pour choisir un projet · Entrée pour ouvrir",
+        "screen": "Échap pour revenir",
+        "project": "← → projet précédent / suivant · Échap pour revenir",
+        "terminal": "Tapez help puis Entrée · Échap pour revenir",
+        "tower": "Échap pour revenir",
+        "phone": "Échap pour revenir",
+        "touchBack": "Bouton Retour pour revenir"
+    },
+    "help": {
+        "title": "Raccourcis clavier",
+        "close": "Fermer",
+        "rows": [
+            [
+                "Tab / Maj + Tab",
+                "Objet suivant / précédent"
+            ],
+            [
+                "← → ↑ ↓",
+                "Se déplacer entre les objets"
+            ],
+            [
+                "Entrée / Espace",
+                "Ouvrir l’objet"
+            ],
+            [
+                "Échap",
+                "Revenir"
+            ],
+            [
+                "L",
+                "Jour / nuit"
+            ],
+            [
+                "M",
+                "Activer / couper le son"
+            ],
+            [
+                "?",
+                "Afficher cette aide"
+            ]
+        ],
+        "secret": "Un code bien connu des joueurs se cache quelque part…"
+    },
+    "screen": {
+        "boot": "Démarrage",
+        "windowProfile": "profil.app",
+        "windowProject": "projets.app",
+        "windowCareer": "parcours.app",
+        "close": "Fermer la fenêtre",
+        "prev": "Projet précédent",
+        "next": "Projet suivant",
+        "skills": "Compétences",
+        "about": "À propos",
+        "projectTypes": "Types de projets",
+        "qualities": "Au-delà du code",
+        "career": "Parcours",
+        "experiences": "Expériences",
+        "education": "Formations",
+        "experience": "{years} d’expérience",
+        "seeProjects": "Voir mes projets",
+        "seeCareer": "Mon parcours",
+        "contactMe": "Me contacter",
+        "downloadCv": "Télécharger mon CV",
+        "rest": "Bureau"
+    },
+    "time": {
+        "year": "an",
+        "years": "ans",
+        "months": "mois",
+        "present": "aujourd’hui"
+    },
+    "phone": {
+        "unlock": "Toucher pour ouvrir",
+        "notification": "Nouveau message",
+        "notificationText": "On travaille ensemble ?",
+        "appTitle": "Contact",
+        "email": "E-mail",
+        "copy": "Copier l’adresse",
+        "copied": "Adresse copiée dans le presse-papiers",
+        "copyFailed": "Copie impossible, sélectionnez l’adresse à la main",
+        "cv": "Télécharger mon CV"
+    },
+    "tower": {
+        "title": "Configuration",
+        "subtitle": "Ce qui fait tourner la machine"
+    },
+    "printer": {
+        "printing": "Impression du CV…",
+        "done": "CV téléchargé"
+    },
+    "toast": {
+        "dayOn": "Mode jour",
+        "nightOn": "Mode nuit",
+        "soundOn": "Son activé",
+        "soundOff": "Son coupé",
+        "overclockDone": "Overclock terminé. Le PC a survécu."
+    },
+    "announce": {
+        "overview": "Vue d’ensemble du bureau",
+        "focus": "{name}, {hint}",
+        "view": "{name} affiché à l’écran"
+    },
+    "monitor": {
+        "cpu": "CPU",
+        "gpu": "GPU",
+        "fans": "Ventilos",
+        "fps": "FPS",
+        "rpm": "tr/min"
+    },
+    "overclock": {
+        "lines": [
+            "> Accès BIOS accordé.",
+            "> Tension CPU : 1,25 V → 1,52 V",
+            "> Fréquence : 4,2 GHz → 7,9 GHz",
+            "> Ventilateurs : mode turbine",
+            "> RGB : mode fête foraine",
+            "> OVERCLOCK ACTIVÉ",
+            "> Température critique… ça sent le chaud."
+        ],
+        "crashTitle": "Votre PC a eu un peu chaud.",
+        "crashText": "Il redémarre pour reprendre ses esprits. Aucune donnée n’a été perdue, promis.",
+        "crashCode": "Code : TROP_DE_PASSION"
+    },
+    "terminal": {
+        "user": "visiteur",
+        "host": "bureau",
+        "inputLabel": "Commande du terminal",
+        "outputLabel": "Sortie du terminal",
+        "welcome": [
+            "Bienvenue sur mon terminal.",
+            "Tapez help pour voir les commandes."
+        ],
+        "unknown": "Commande introuvable : {cmd}. Tapez help.",
+        "help": [
+            [
+                "help",
+                "liste des commandes"
+            ],
+            [
+                "whoami",
+                "qui suis-je"
+            ],
+            [
+                "parcours",
+                "expériences et formations"
+            ],
+            [
+                "projets",
+                "liste des projets"
+            ],
+            [
+                "open <n>",
+                "ouvrir un projet à l’écran"
+            ],
+            [
+                "contact",
+                "me contacter"
+            ],
+            [
+                "cv",
+                "imprimer mon CV"
+            ],
+            [
+                "theme jour|nuit",
+                "changer l’ambiance"
+            ],
+            [
+                "son on|off",
+                "activer ou couper le son"
+            ],
+            [
+                "ls, cat <fichier>",
+                "explorer les fichiers"
+            ],
+            [
+                "clear, history",
+                "effacer, historique"
+            ],
+            [
+                "exit",
+                "quitter le terminal"
+            ]
+        ],
+        "projectsHint": "Tapez open <numéro> pour en ouvrir un.",
+        "openUsage": "Usage : open <numéro ou nom>",
+        "openNotFound": "Aucun projet ne correspond à « {arg} ».",
+        "opening": "Ouverture de « {title} » sur l’écran principal…",
+        "contactLine": "E-mail : {email}",
+        "formLine": "{label} : {url}",
+        "careerHint": "Tapez open parcours pour l’afficher à l’écran.",
+        "cvPrinting": "Envoi du CV à l’imprimante…",
+        "themeUsage": "Usage : theme jour|nuit",
+        "themeSet": "Ambiance : {theme}.",
+        "soundUsage": "Usage : son on|off",
+        "soundSet": "Son : {state}.",
+        "catUsage": "Usage : cat <fichier>",
+        "catNotFound": "cat : {file} : aucun fichier de ce nom",
+        "catDir": "cat : {file} : est un dossier",
+        "secret": "↑ ↑ ↓ ↓ ← → ← → B A, à taper n’importe où sur le bureau.",
+        "secretTouch": "Sur écran tactile : glissez ↑ ↑ ↓ ↓ ← → ← → puis touchez deux fois l’écran.",
+        "sudo": "{user} n’est pas dans le fichier sudoers. Cet incident sera signalé… au café.",
+        "rm": "Bien tenté.",
+        "konami": "Ce serait trop facile. Cherchez plutôt un fichier caché.",
+        "overclock": "Accès refusé. Il vous faut le code.",
+        "exit": "À bientôt !",
+        "pwd": "/home/visiteur",
+        "historyEmpty": "Historique vide.",
+        "on": "activé",
+        "off": "coupé",
+        "day": "jour",
+        "night": "nuit"
+    },
+    "static": {
+        "noWebgl": "Votre navigateur ne permet pas d’afficher le bureau en 3D : voici l’essentiel du portfolio.",
+        "simpleSite": "Voir la version simple du site",
+        "open3d": "Ouvrir la version 3D",
+        "profileTitle": "Profil",
+        "careerTitle": "Parcours",
+        "projectsTitle": "Projets",
+        "contactTitle": "Contact",
+        "cv": "Télécharger mon CV (PDF)"
+    }
+}

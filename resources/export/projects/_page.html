@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="{{lang}}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{title}}</title>
+    <style>
+        :root {
+            --bg: #fffaf4; --text: #2b2522; --muted: #66594f; --faint: #85776c; --accent: #b5532f;
+            --line: rgba(43, 37, 34, .12); --tag-bg: rgba(79, 125, 112, .14); --tag-text: #4f7d70;
+            color-scheme: light;
+        }
+        /* Le portfolio indique son ambiance sur <html data-theme="day|night"> */
+        :root[data-theme="night"] {
+            --bg: #181922; --text: #f1ece6; --muted: #bcb2a9; --faint: #958b83; --accent: #f08a5d;
+            --line: rgba(255, 255, 255, .12); --tag-bg: rgba(143, 193, 178, .16); --tag-text: #8fc1b2;
+            color-scheme: dark;
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 2rem 2.5rem 3rem; font: 1rem/1.6 system-ui, sans-serif; color: var(--muted); background: var(--bg); }
+        .eyebrow { margin: 0 0 .5rem; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+        h1 { margin: 0 0 .75rem; font-size: 2.2rem; line-height: 1.15; letter-spacing: -.02em; color: var(--text); }
+        h2 { margin: 2rem 0 .75rem; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+        h3 { margin: 1.25rem 0 .25rem; font-size: 1.05rem; color: var(--text); }
+        h3 + p { margin-top: 0; }
+        .lead { margin-top: 0; font-size: 1.2rem; }
+        .links { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; margin: 1rem 0 0; }
+        figure { margin: 1.5rem 0; }
+        figcaption { margin-top: .5rem; font-size: .85rem; line-height: 1.4; color: var(--faint); }
+        img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: .75rem; }
+        ul { padding-left: 1.25rem; }
+        li + li { margin-top: .35rem; }
+        a { font-weight: 600; color: var(--accent); }
+        .tags { display: flex; flex-wrap: wrap; gap: .5rem; padding: 0; list-style: none; }
+        .tags li { margin: 0; padding: .2rem .8rem; font-size: .85rem; font-weight: 500; color: var(--tag-text); background: var(--tag-bg); border-radius: 999px; }
+    </style>
+</head>
+<body>
+    <p class="eyebrow">{{eyebrow}}</p>
+    <h1>{{title}}</h1>
+    <p class="lead">{{summary}}</p>
+{{links}}
+    <figure>
+        <img src="{{image}}" alt="{{alt}}" width="1600" height="900">
+    </figure>
+{{description}}
+{{process}}
+{{highlights}}
+{{stack}}
+</body>
+</html>

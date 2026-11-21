@@ -15,23 +15,29 @@ Le site est volontairement sobre côté technique : du PHP sans framework, du SC
 ## Arborescence
 
 ```
+.env.prod                adresses publiques de l'export en prod
+.env.preprod             adresses de l'export en préprod (non versionné)
 .githooks/post-merge     mise à jour du serveur après chaque git pull
 .github/workflows/       vérification de chaque commit (GitHub Actions, sans accès au serveur)
 composer.json, .lock     dépendance PHP (PHPMailer), versions figées
 config/
     config.example.php   modèle de configuration (versionné)
     config.php           configuration réelle, secrets compris (non versionné)
+    build.php            mode du dernier build, prod ou preprod (généré, non versionné)
+export/                  dossier site/ du portfolio 3D, créé par npm run build ou npm run export (non versionné)
 js/                      modules JavaScript sources (minifiés dans public/assets/js/)
 public/                  racine web
     index.php            accueil
+    projet.php           pages des projets (/projets/<slug>), réécrites par le .htaccess
     mentions-legales.php
     contact.php          traitement du formulaire (POST uniquement)
     sitemap.xml.php      crée public/sitemap.xml au premier appel
     robots.txt.php       crée public/robots.txt au premier appel
     assets/              CSS compilé, JavaScript minifié, images générées, CV (docs/), bibliothèques (vendor/)
     .htaccess            URL sans .php, cache des fichiers statiques, compression
-resources/images/        images sources (portrait, logo)
-scripts/                 génération des images et du SVG du logo, copie des bibliothèques
+resources/images/        images sources (portrait, logo, visuels des projets dans projects/)
+resources/export/        contenu propre au portfolio 3D, complété par celui du site à l'export
+scripts/                 génération des images et du SVG du logo, copie des bibliothèques, mode du build, export
 scss/                    variables, design system, mixins, composants
 src/
     bootstrap.php        chargement commun à toutes les pages
@@ -51,12 +57,12 @@ vendor/                  dépendances Composer (non versionné, créé par compo
 
 ## Installation locale
 
-Prérequis : PHP 8.3 (extensions `mbstring`, `intl`, `curl`, `openssl`), Apache avec `mod_rewrite` (WAMP, MAMP, Laragon…), [Composer](https://getcomposer.org/) et Node.js 20 ou plus.
+Prérequis : PHP 8.3 (extensions `mbstring`, `intl`, `curl`, `openssl`), Apache avec `mod_rewrite` (WAMP, MAMP, Laragon…), [Composer](https://getcomposer.org/) et Node.js 20.19 ou plus.
 
 ```bash
 composer install
 npm install
-npm run build          # images, logo SVG, bibliothèques, CSS et JavaScript
+npm run build:preprod  # images, logo SVG, bibliothèques, CSS, JavaScript et export, en mode préprod
 cp config/config.example.php config/config.php
 php -r "echo bin2hex(random_bytes(32));"   # à coller dans appSecret
 ```
@@ -69,6 +75,36 @@ Sous WAMP, PHP ne connaît souvent aucune autorité de certification : la vérif
 
 Le site fonctionne dans un sous-dossier (par exemple `http://localhost/claude-site/`) : le `.htaccess` racine redirige les requêtes vers `public/` et les URL sont calculées automatiquement.
 
+## Modes prod et préprod
+
+Un projet pas encore en ligne porte `'prod' => false` dans `content.php` : il n'apparaît qu'en préprod, sur le site (carte, page, sitemap) comme dans l'export du portfolio 3D. En prod, sa page répond 404.
+
+| Commande | Rôle |
+|---|---|
+| `npm run build` | Compile tout en mode prod, puis génère l'export en mode prod. |
+| `npm run build:preprod` | Compile tout en mode préprod, puis génère l'export en mode préprod. C'est le mode du site en local. |
+| `npm run build:assets` | Compile seulement les images, le logo, les bibliothèques, le CSS et le JavaScript, sans toucher au mode ni à l'export. |
+
+Le mode est écrit dans `config/build.php` (non versionné), que lit le site ; sans ce fichier, le site est en prod. Changer de mode supprime `public/sitemap.xml`, régénéré au prochain appel avec les pages de ce mode.
+
+## Export pour le portfolio 3D
+
+```bash
+npm run export            # mode prod, adresses de .env.prod
+npm run export:preprod    # mode préprod, adresses de .env.preprod, projets pas encore en ligne compris
+```
+
+`npm run build` et `npm run build:preprod` génèrent déjà l'export ; ces commandes le régénèrent seules, une fois les images compilées.
+
+La commande écrit dans `export/` (non versionné) le dossier `site/` du portfolio 3D, prêt à remplacer le sien : il correspond au dernier mode exporté. Elle lit `src/content.php` avec PHP en ligne de commande (`php` dans le PATH, ou son chemin dans la variable d'environnement `PHP`) :
+- identité, présentation, compétences, parcours, réseaux et accroche de contact viennent du site, comme le portrait, le logo, le CV, l'image de partage et les logos des entreprises ;
+- les projets aussi, dans l'ordre du site (en prod, sans ceux marqués `'prod' => false` ; 8 au plus, la place sur les étagères) : titre, année, page HTML générée à partir de `resources/export/projects/_page.html` et visuel du projet ;
+- `PUBLIC_SITE_URL` est l'adresse publique du site : cible des liens « Version simple » et du formulaire de contact du portfolio. `PUBLIC_PROJECTS_URL` remplace `projectsUrl` pour les liens relatifs des projets. Toutes deux sont lues dans `.env.prod` ou `.env.preprod`, versionnés car ils ne contiennent que des adresses publiques. Une variable d'environnement du même nom l'emporte, par exemple sous PowerShell : `$env:PUBLIC_SITE_URL = 'https://renardleo.fr'; npm run export`. Vides, ces liens ne sont pas exportés ;
+- de la configuration, seul `openToWork` est lu : statut et mode de travail ne sont exportés que si la recherche d'emploi est affichée ;
+- ce qui n'existe que dans le portfolio 3D est dans `resources/export/`, avec la même arborescence : textes de l'interface 3D, fiche de la tour (`rig`), couleur et cadrage de la photo. Ses fichiers JSON complètent ceux générés et l'emportent sur eux, les autres fichiers sont copiés tels quels.
+
+Le format attendu par le portfolio est décrit dans `resources/export/README.md`, copié avec l'export.
+
 ## Configuration
 
 Tout se règle dans `config/config.php` :
@@ -76,6 +112,7 @@ Tout se règle dans `config/config.php` :
 | Clé | Rôle |
 |---|---|
 | `siteUrl` | URL publique, sans barre finale (URL canoniques, Open Graph, sitemap, robots.txt, objet des e-mails). |
+| `projectsUrl` | Adresse où sont publiés les projets (`https://work.renardleo.fr`) : préfixe des liens relatifs de `content.php`, clé `projects` (`solar-system` devient `https://work.renardleo.fr/solar-system`). |
 | `openToWork` | `true` affiche tout ce qui concerne la recherche d'emploi : statut, mode de travail, permis, introduction « Un poste… » du contact. Textes dans `content.php`, clé `openToWork`. |
 | `hero` | Version du hero : `'studio'` (plan de travail et inspecteur) ou `'classic'` (ancienne version, conservée). |
 | `appSecret` | Clé secrète de 64 caractères hexadécimaux : signature du jeton anti-CSRF et empreinte des adresses IP. Vide, le formulaire refuse les envois. La changer invalide les formulaires déjà ouverts (le visiteur n'a qu'à renvoyer). |
@@ -100,7 +137,8 @@ Les étapes 1 et 2 sont remplacées par la [mise à jour par git pull](#mise-à-
 
 1. **Dépendances PHP** : en local, `composer install --no-dev --optimize-autoloader` (sans les outils de développement, chargement optimisé). Envoyer ensuite le dossier `vendor/` ; ou, avec un accès SSH chez Infomaniak, envoyer `composer.json` et `composer.lock` et lancer la même commande sur le serveur. Sans `vendor/`, les pages fonctionnent mais le transport `'smtp'` répond « indisponible » et le journalise.
 2. **Fichiers à envoyer** (SFTP) : `config/` (avec un `config.php` de production), `public/`, `src/`, `templates/`, `vendor/` et le `.htaccess` racine.
-   **À ne pas envoyer** : `node_modules/`, `js/`, `resources/`, `scripts/`, `scss/`, `var/`, `.claude/`, `package*.json`, `README.md`. Le CSS, le JavaScript et les images étant compilés dans `public/assets/` (`npm run build`), Node.js n'est pas nécessaire sur le serveur.
+   **À ne pas envoyer** : `node_modules/`, `js/`, `resources/`, `scripts/`, `scss/`, `var/`, `export/`, `.claude/`, `.env.*`, `package*.json`, `README.md`. Le CSS, le JavaScript et les images étant compilés dans `public/assets/` (`npm run build`), Node.js n'est pas nécessaire sur le serveur.
+   Lancer `npm run build` juste avant l'envoi : il remet `config/build.php` en mode prod, alors qu'après un build préprod le site afficherait aussi les projets pas encore en ligne.
 3. **Racine du site** : envoyer le projet dans un dossier de l'hébergement (par exemple `/sites/renardleo.fr`), puis, dans le Manager (Hébergements & sites › nom du site › Paramètres avancés › Gérer), faire pointer le dossier du site sur son sous-dossier `public/` ([FAQ 963](https://www.infomaniak.com/fr/support/faq/963/modifier-le-dossier-dun-site-web)). Ainsi, `config/`, `src/`, `var/` et `vendor/` ne sont jamais accessibles depuis le web.
 4. **PHP 8.3** : à choisir dans les paramètres avancés du site.
 5. **HTTPS** : installer un certificat Let's Encrypt et activer la redirection HTTPS. L'en-tête HSTS n'est envoyé qu'en HTTPS.
@@ -117,7 +155,7 @@ Le site se met à jour quand on lance `git pull` en SSH sur le serveur : GitHub 
 2. recompile seulement ce dont les sources ont changé (images, logo, bibliothèques, CSS, JavaScript) : les autres fichiers gardent leur date, donc leur `?v=`, et restent en cache chez les visiteurs ;
 3. supprime `public/robots.txt` et `public/sitemap.xml`, régénérés au prochain appel.
 
-Les fichiers compilés ne sont pas versionnés : le dépôt ne contient que les sources. `config/config.php` et `var/`, absents du dépôt, ne sont jamais touchés. En cas d'erreur, le hook s'arrête et donne la commande de reprise, `FULL=1 sh .githooks/post-merge`, qui refait tout.
+Les fichiers compilés ne sont pas versionnés : le dépôt ne contient que les sources. Le hook ne génère ni l'export ni `config/build.php` : sans ce fichier, le site est en prod. `config/config.php` et `var/`, absents du dépôt, ne sont jamais touchés. En cas d'erreur, le hook s'arrête et donne la commande de reprise, `FULL=1 sh .githooks/post-merge`, qui refait tout.
 
 Le workflow `.github/workflows/verification.yml` vérifie à chaque push la syntaxe PHP et la compilation, sans secret ni accès au serveur : attendre sa coche verte sur GitHub avant de lancer le pull.
 
@@ -164,7 +202,18 @@ Pas de framework JavaScript, de bibliothèque d'animation ni de police web : les
 
 ### Référencement
 
-`/sitemap.xml` et `/robots.txt` sont créés par PHP à partir de `siteUrl` : aucune URL de production n'est écrite en dur. Tant que `public/sitemap.xml` n'existe pas, la réécriture « /page → page.php » du `.htaccess` appelle `public/sitemap.xml.php`, qui écrit le fichier puis le renvoie ; Apache le sert ensuite directement, sans PHP. Même principe pour `robots.txt`. Pour les régénérer (nouvelle page, changement de `siteUrl`), il suffit de supprimer le fichier : la mise à jour par `git pull` le fait à chaque fois. Si `public/` n'est pas accessible en écriture, l'échec est journalisé et PHP continue de répondre à chaque appel. Toute nouvelle page est à ajouter à la liste de `sitemap.xml.php`.
+`/sitemap.xml` et `/robots.txt` sont créés par PHP à partir de `siteUrl` : aucune URL de production n'est écrite en dur. Tant que `public/sitemap.xml` n'existe pas, la réécriture « /page → page.php » du `.htaccess` appelle `public/sitemap.xml.php`, qui écrit le fichier puis le renvoie ; Apache le sert ensuite directement, sans PHP. Même principe pour `robots.txt`. Pour les régénérer (nouvelle page, changement de `siteUrl`), il suffit de supprimer le fichier : la mise à jour par `git pull` le fait à chaque fois. Si `public/` n'est pas accessible en écriture, l'échec est journalisé et PHP continue de répondre à chaque appel. Toute nouvelle page est à ajouter à la liste de `sitemap.xml.php` ; celles des projets y figurent d'elles-mêmes.
+
+### Projets
+
+Chaque projet de `content.php` (clé `projects`) a sa carte dans la section Projets de l'accueil et sa page `/projets/<slug>`, ajoutée au sitemap avec sa propre image de partage. Pour en ajouter un :
+
+1. Ajouter son entrée dans `content.php`, à sa place : les projets vont du plus récent au plus ancien. `url` est une adresse absolue, ou un chemin ajouté à `projectsUrl` ; `code` un dépôt public, ou `null` ; `process`, facultatif, raconte la démarche en étapes titrées (rubrique « Démarche », liens `[texte](https://…)` acceptés) ; `'prod' => false` le réserve à la préprod tant qu'il n'est pas en ligne (voir [Modes prod et préprod](#modes-prod-et-préprod)).
+2. Déposer son visuel en `resources/images/projects/<slug>.png` (1600 × 900), puis lancer `npm run build:images` : il est décliné en AVIF, WebP et JPEG de 480 à 1600 px de large, et en image de partage de 1200 × 630.
+   Une étape peut être illustrée : `images` y liste des captures `{file, alt, caption}`, déposées en `resources/images/projects/<slug>/<file>.png` (1600 × 900) et déclinées de la même façon ; `caption`, la légende, est facultative.
+3. Pour le portfolio 3D, relancer `npm run export` : `projects/<slug>/project.json` n'y contient que l'année, car l'objet posé sur l'étagère (`prop`) est créé et choisi d'après le slug dans le portfolio 3D lui-même.
+
+Un slug inconnu renvoie une page « Page introuvable » avec le statut 404.
 
 ### CV
 

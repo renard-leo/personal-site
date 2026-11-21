@@ -10,7 +10,7 @@
 
     body {background: none}
 
-    .skip-link, .site-header, #cc-main, .hero-actions, .hero-code, .status-dot, .contact-card, .footer-links, .icon-sprite {display: none !important}
+    .skip-link, .site-header, #cc-main, .hero-actions, .hero-code, .status-dot, .contact-card, .footer-links, .icon-sprite, .page-actions, .project-pager {display: none !important}
 
     *, *::before, *::after {animation: none !important; transition: none !important; box-shadow: none !important}
 
@@ -36,13 +36,13 @@
 
     h2, h3, h4 {break-after: avoid}
 
-    .quality, .experience, .degree, .position, .code-window {break-inside: avoid}
+    .quality, .experience, .degree, .position, .code-window, .project-card, .project-media, .project-step {break-inside: avoid}
 
     .qualities {grid-template-columns: repeat(2, minmax(0, 1fr))}
 
     .quality, .quality:nth-child(n), .quality:last-child {grid-column: auto; padding: var(--space-sm) 0; border: 0}
 
-    .career-grid, .profile-grid, .contact-grid, .legal-grid {display: block}
+    .career-grid, .profile-grid, .contact-grid, .legal-grid, .project-layout {display: block}
 
     .career-column + .career-column, .profile-projects {margin-top: var(--space-xl)}
 

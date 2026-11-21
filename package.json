@@ -12,7 +12,11 @@
         "build:vendor": "node scripts/vendor.mjs",
         "build:js": "node scripts/js.mjs",
         "watch:js": "node scripts/js.mjs --watch",
-        "build": "npm run build:images && npm run build:svg && npm run build:vendor && npm run build:css && npm run build:js"
+        "build:assets": "npm run build:images && npm run build:svg && npm run build:vendor && npm run build:css && npm run build:js",
+        "build": "npm run build:assets && node scripts/mode.mjs prod && node scripts/export.mjs prod",
+        "build:preprod": "npm run build:assets && node scripts/mode.mjs preprod && node scripts/export.mjs preprod",
+        "export": "node scripts/export.mjs prod",
+        "export:preprod": "node scripts/export.mjs preprod"
     },
     "devDependencies": {
         "esbuild": "^0.28.2",

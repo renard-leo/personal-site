@@ -1,12 +1,6 @@
 @use "../variables" as *;
 @use "../s4_mixin" as *;
 
-.legal {padding-block: var(--space-2xl) var(--space-section)}
-
-.legal-head {margin-bottom: var(--space-2xl)}
-
-.legal-title {font-size: var(--fs-3xl); letter-spacing: var(--ls-display)}
-
 .legal-grid {
     display: grid; gap: var(--space-2xl);
     @include mq($bp-lg) {grid-template-columns: var(--toc-w) minmax(0, 1fr); gap: var(--space-gap); align-items: start}

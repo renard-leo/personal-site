@@ -10,6 +10,7 @@ return [
         'firstName' => 'Léo',
         'lastName' => 'Renard',
         'role' => 'Développeur full-stack',
+        'careerStart' => $careerStart->format('Y-m'),
         'yearsOfExperience' => $careerStart->diff(new DateTimeImmutable('today'))->y,
         'location' => 'Épinal (Vosges)',
     ],
@@ -40,6 +41,7 @@ return [
     'navigation' => [
         ['label' => 'Profil', 'anchor' => 'profil'],
         ['label' => 'Compétences', 'anchor' => 'competences'],
+        ['label' => 'Projets', 'anchor' => 'projets'],
         ['label' => 'Parcours', 'anchor' => 'parcours'],
         ['label' => 'Contact', 'anchor' => 'contact'],
     ],
@@ -70,6 +72,193 @@ return [
         ['title' => 'CMS', 'items' => ['WordPress']],
         ['title' => 'Méthodes et outils', 'items' => ['Git','Accessibilité RGAA', 'Figma']],
         ['title' => 'Design', 'items' => ['Photoshop', 'Illustrator', 'Adobe XD']],
+    ],
+
+    // Une page par projet (/projets/<slug>), du plus récent au plus ancien. Image : resources/images/projects/<slug>.png (1600 × 900).
+    // url : adresse absolue, ou chemin ajouté à config('projectsUrl'). code : dépôt public, sinon null.
+    // process : étapes de la démarche ; text accepte un ou plusieurs paragraphes et des liens [texte](https://…).
+    // images d'une étape : resources/images/projects/<slug>/<file>.png (1600 × 900), avec alt et une légende facultative (caption).
+    // prod : false tant que le projet n'est pas en ligne ; il n'apparaît alors qu'en préprod (npm run build:preprod).
+    'projects' => [
+        [
+            'slug' => 'hit-or-miss',
+            'prod' => false,
+            'title' => 'Hit or Miss',
+            'year' => '2026',
+            'role' => 'Conception et développement',
+            'summary' => 'Un quiz musical multijoueur pour les soirées : une seconde d’un morceau pour trouver le titre, puis trois, puis dix.',
+            'description' => [
+                'Hit or Miss est un jeu télévisé musical à jouer entre amis. À chaque manche, il faut reconnaître un morceau à partir d’un extrait d’une seconde, qui s’allonge à trois puis à dix secondes : plus la réponse est rapide, plus elle rapporte de points.',
+                'J’ai conçu et développé l’ensemble du projet, du moteur de jeu en temps réel à la bibliothèque musicale, jusqu’à sa mise en ligne.',
+            ],
+            'process' => [
+                [
+                    'title' => 'L’idée',
+                    'text' => 'Le jeu part de « Devine la chanson », auquel j’ai ajouté le multijoueur pour pouvoir y jouer en soirée. Un appareil principal sert d’écran à l’émission. Un téléphone peut servir de télécommande, pour passer les manches et valider à la main certaines réponses libres. Chaque joueur rejoint ensuite la partie en scannant un QR code ou en saisissant le code de la partie, sans créer de compte.',
+                    'images' => [
+                        [
+                            'file' => 'menu',
+                            'alt' => 'Menu de Hit or Miss en thème sombre : à gauche « Créer une partie », à lancer sur l’écran que tout le monde voit, à droite « Rejoindre une partie » avec le champ du code à six chiffres.',
+                            'caption' => 'Le menu : la partie se crée sur l’écran principal, puis chaque joueur la rejoint avec son code ou en scannant le QR code.',
+                        ],
+                    ],
+                ],
+                [
+                    'title' => 'Le choix de React',
+                    'text' => 'Un jeu doit répondre sans délai. J’ai choisi React pour son interface réactive, qui se met à jour dès qu’un joueur répond, avec Socket.IO pour transmettre en temps réel l’état de la partie à l’écran principal, à la télécommande et à chaque téléphone.',
+                ],
+                [
+                    'title' => 'Le logo',
+                    'text' => 'Pour l’identité, je suis parti de l’univers des jeux télévisés et des quiz musicaux. Le logo associe un disque vinyle au nom « HIT — or — MISS », et son animation de chargement reprend la mécanique du jeu : un arc s’allonge d’une à trois, puis à dix secondes pendant que le disque tourne.',
+                    'images' => [
+                        [
+                            'file' => 'chargement',
+                            'alt' => 'Trois états de l’animation de chargement : autour du disque vinyle, un arc violet couvre un dixième du cercle à 1 s, près d’un tiers à 3 s, puis presque tout le cercle à 10 s.',
+                            'caption' => 'L’animation de chargement : l’arc grandit comme l’extrait, d’une à trois, puis à dix secondes.',
+                        ],
+                    ],
+                ],
+                [
+                    'title' => 'Trois identités',
+                    'text' => 'Le logo se décline en trois identités complètes, violet, corail et menthe, chacune en version claire et sombre, avec favicons et écran de présentation. L’identité se choisit à la compilation, et les couleurs du texte et des graphiques ont été ajustées pour rester lisibles, y compris par les personnes daltoniennes.',
+                    'images' => [
+                        [
+                            'file' => 'identites',
+                            'alt' => 'Le logo Hit or Miss décliné six fois : en violet, corail et menthe, sur fond clair en haut et sur fond sombre en bas.',
+                            'caption' => 'Le logo dans les trois identités, en version claire puis sombre.',
+                        ],
+                    ],
+                ],
+                [
+                    'title' => 'Les présentateurs',
+                    'text' => [
+                        'Pour incarner l’émission, j’ai imaginé des présentateurs en 3D. Un animateur et une animatrice partagent le même squelette et les mêmes animations, avec cinq teintes de peau et cinq couleurs de cheveux, et l’un d’eux est tiré au sort à chaque partie. S’y ajoute mon sosie, modelé d’après des photos.',
+                        'Ils sont entièrement générés par code, en style cartoon, sans modèle 3D à télécharger : ils saluent, présentent chaque extrait, dansent pendant l’écoute et réagissent aux bonnes comme aux mauvaises réponses. Décoratifs, ils ne font que doubler ce que le texte et les lecteurs d’écran annoncent déjà.',
+                    ],
+                    'images' => [
+                        [
+                            'file' => 'presentateurs',
+                            'alt' => 'Cinq présentateurs cartoon en veste violette et nœud papillon jaune, micro en main : deux animatrices et deux animateurs aux teintes de peau et couleurs de cheveux différentes, avec au centre le sosie du créateur.',
+                            'caption' => 'Quelques tirages possibles, rendus avec le code du jeu. Au centre, mon sosie.',
+                        ],
+                    ],
+                ],
+            ],
+            'highlights' => [
+                'Partie synchronisée en temps réel entre l’écran partagé, la télécommande de l’animateur et les téléphones des joueurs (Socket.IO).',
+                'Extraits découpés pendant la partie avec ffmpeg, depuis un point aléatoire, et son lancé au même instant sur tous les téléphones.',
+                'Bibliothèque musicale : import de morceaux, volume harmonisé (EBU R128), playlists publiques ou privées.',
+                'Tests unitaires (Vitest) et parties de bout en bout sur plusieurs navigateurs (Playwright), avec contrôle d’accessibilité WCAG 2.2 AA.',
+            ],
+            'stack' => ['TypeScript', 'React', 'Fastify', 'Socket.IO', 'Three.js', 'SQLite', 'Drizzle ORM', 'ffmpeg', 'Sass', 'Playwright'],
+            'url' => 'https://hit-or-miss.renardleo.fr/',
+            'code' => null,
+            'imageAlt' => 'Écran-titre de Hit or Miss en thème sombre : le logo au disque vinyle et l’invitation « Cliquez pour commencer », qui mène au menu.',
+        ],
+        [
+            'slug' => 'portfolio-3d',
+            'title' => 'Portfolio 3D',
+            'year' => '2026',
+            'role' => 'Conception et développement',
+            'summary' => 'Mon portfolio sous la forme d’un bureau en 3D, à explorer au clavier, à la souris ou au toucher.',
+            'description' => [
+                'Au chargement, l’ordinateur s’allume puis l’écran affiche mon profil. Chaque objet du bureau ouvre un contenu : les projets sur les étagères, un terminal sur le second écran, le contact sur le smartphone, le CV à l’imprimante et l’ambiance jour ou nuit avec la lampe.',
+                'Toute la scène est modélisée en code, sans modèle 3D ni texture à télécharger. Son contenu est généré à partir de ce site.',
+            ],
+            'process' => [
+                [
+                    'title' => 'L’idée',
+                    'text' => 'L’idée est venue en découvrant des projets similaires, des CRM d’entreprise en 3D : ils m’ont donné envie de faire une version de mon portfolio en 3D.',
+                ],
+                [
+                    'title' => 'Tout voir en un clic',
+                    'text' => 'Le but était de pouvoir tout voir en un clic : chaque objet du bureau ouvre directement son contenu, qu’il s’agisse du profil, des projets, du parcours, du contact ou du CV.',
+                ],
+            ],
+            'highlights' => [
+                'Scène WebGL avec Three.js, et contenus des écrans en vrai HTML : sélectionnables, cliquables et lus par les lecteurs d’écran.',
+                'Qualité de rendu adaptée à l’appareil, puis abaissée automatiquement si l’animation passe sous 45 images par seconde.',
+                'Navigation complète au clavier, annonces vocales, mouvement réduit respecté et version statique pour les navigateurs sans WebGL.',
+                'Terminal interactif avec ses propres commandes, et quelques secrets à découvrir.',
+            ],
+            'stack' => ['Three.js', 'GSAP', 'JavaScript', 'Vite', 'Sass'],
+            'url' => 'portfolio',
+            'code' => null,
+            'imageAlt' => 'Le bureau en 3D du portfolio : ordinateur, écrans, étagères d’objets, lampe et plantes.',
+        ],
+        [
+            'slug' => 'revoicechat',
+            'title' => 'ReVoiceChat',
+            'year' => '2026',
+            'role' => 'Site vitrine et CMS',
+            'summary' => 'Le site de présentation de ReVoiceChat, une alternative open source à Discord, produit par un CMS que j’ai développé.',
+            'description' => [
+                'ReVoiceChat est une application de chat et d’appels vocaux open source, que chacun peut héberger sur son propre serveur. J’ai conçu et développé son site de présentation : arguments clés, partage d’écran simultané, comparatif avec Discord et Slack.',
+                'Le site est généré par rl-site-builder, un CMS que j’ai créé : un backoffice React pour éditer les pages, les menus, le référencement, les médias et les couleurs, puis une compilation qui produit un site en HTML statique, mis en forme avec Tailwind CSS.',
+            ],
+            'process' => [
+                [
+                    'title' => 'Le besoin',
+                    'text' => 'Il fallait un site dont les textes se modifient facilement et rapidement, et dont l’apparence puisse évoluer vite au besoin.',
+                ],
+                [
+                    'title' => 'Un premier essai avec ChaiBuilder',
+                    'text' => 'Le projet a commencé début 2026 avec un fork de [ChaiBuilder](https://github.com/chaibuilder), un constructeur visuel de sites open source. Sa mise en production a buté sur l’hébergeur, qui bloque certains ports entrants et sortants dont l’outil avait besoin : le site a donc été exporté en statique pour pouvoir être mis en ligne.',
+                ],
+                [
+                    'title' => 'Un CMS sur mesure',
+                    'text' => 'À l’automne 2026, j’ai décidé de refaire le projet avec un outil plus adapté à ce que je souhaitais, qui serve aussi de base à d’autres sites. rl-site-builder est né pour résoudre ce problème : il compile automatiquement le site statique, en reprenant d’abord l’apparence du site existant. Certains composants ont ensuite été améliorés graphiquement, sans bouleverser l’architecture.',
+                ],
+                [
+                    'title' => 'Un backoffice hors ligne',
+                    'text' => 'Le backoffice n’est pas en ligne, ce qui évite l’exploitation de ses éventuelles failles, et le site publié est entièrement statique : il n’a besoin d’aucune base de données pour fonctionner.',
+                ],
+            ],
+            'highlights' => [
+                'Backoffice React avec éditeur de texte riche (Tiptap) et aperçu en direct des pages.',
+                'Site entièrement statique en production : pages dans chaque langue, sitemap, robots.txt et page 404 générés à la compilation.',
+                'Données stockées avec le module SQLite intégré à Node.js, sans dépendance native à compiler.',
+                'Mise en ligne automatique : GitHub Actions publie le site compilé à chaque modification.',
+            ],
+            'stack' => ['React', 'TypeScript', 'Node.js', 'Express', 'Tailwind CSS', 'SQLite', 'Vite', 'GitHub Actions'],
+            'url' => 'https://www.revoicechat.fr/',
+            'code' => null,
+            'imageAlt' => 'Accueil du site de ReVoiceChat, avec un aperçu de l’application de chat.',
+        ],
+        [
+            'slug' => 'systeme-solaire',
+            'title' => 'Système solaire interactif',
+            'year' => '2026',
+            'role' => 'Conception et développement',
+            'summary' => 'Le système solaire en 3D temps réel : on tourne autour du Soleil et on suit chaque planète.',
+            'description' => [
+                'Animation 3D du système solaire avec Three.js. On clique sur un astre pour le suivre et afficher sa fiche (rotation, révolution, gravité, masse…), d’après les données de la NASA.',
+            ],
+            'process' => [
+                [
+                    'title' => 'Un ancien projet',
+                    'text' => 'J’en avais réalisé une première version il y a plusieurs années, en HTML, CSS et JavaScript, pour jouer avec les effets d’animation CSS de l’époque : les ombres, la lumière du Soleil, la rotation de chaque planète.',
+                ],
+                [
+                    'title' => 'Une refonte avec l’IA',
+                    'text' => 'Le but était de le refaire avec l’IA en un minimum de prompts, en gardant l’idée de départ, pour m’exercer à travailler avec elle.',
+                ],
+                [
+                    'title' => 'Des idées en plus',
+                    'text' => 'Le premier résultat était plutôt satisfaisant, puis quelques idées sont venues enrichir le projet.',
+                ],
+            ],
+            'highlights' => [
+                'Textures des planètes générées procéduralement dans des Web Workers.',
+                'Les 21 principaux satellites naturels orbitent autour de leur planète.',
+                'Vitesse réglable, du temps réel à une année par seconde, avec la date simulée.',
+                'Navigation au clavier : 0 à 8 pour choisir un astre, ← et → pour passer au suivant, Échap pour revenir, Espace pour la pause.',
+            ],
+            'stack' => ['Three.js', 'JavaScript', 'Sass', 'Web Workers'],
+            'url' => 'solar-system',
+            'code' => 'https://github.com/renard-leo/project--animated-solar-system',
+            'imageAlt' => 'Vue d’ensemble du système solaire en 3D, avec les orbites des planètes et la ceinture d’astéroïdes.',
+        ],
     ],
 
     'experiences' => [

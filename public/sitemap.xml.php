@@ -6,7 +6,7 @@ declare(strict_types=1);
 // qu'Apache sert ensuite directement. Le supprimer pour le régénérer (chaque git pull sur le serveur le fait).
 require __DIR__ . '/../src/bootstrap.php';
 
-$pages = ['', 'mentions-legales'];
+$pages = ['', ...array_map(static fn (array $project): string => 'projets/' . $project['slug'], projects()), 'mentions-legales'];
 
 $urls = implode('', array_map(static fn (string $path): string => '    <url><loc>' . e(absolute_url($path)) . "</loc></url>\n", $pages));
 $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n" . $urls . "</urlset>\n";
