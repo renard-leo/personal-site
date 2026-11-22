@@ -152,7 +152,7 @@ return [
             ],
             'stack' => ['TypeScript', 'React', 'Fastify', 'Socket.IO', 'Three.js', 'SQLite', 'Drizzle ORM', 'ffmpeg', 'Sass', 'Playwright'],
             'url' => 'https://hit-or-miss.renardleo.fr/',
-            'code' => null,
+            'code' => 'https://github.com/renard-leo/hit-or-miss',
             'imageAlt' => 'Écran-titre de Hit or Miss en thème sombre : le logo au disque vinyle et l’invitation « Cliquez pour commencer », qui mène au menu.',
         ],
         [
@@ -182,8 +182,8 @@ return [
                 'Terminal interactif avec ses propres commandes, et quelques secrets à découvrir.',
             ],
             'stack' => ['Three.js', 'GSAP', 'JavaScript', 'Vite', 'Sass'],
-            'url' => 'portfolio',
-            'code' => null,
+            'url' => 'portfolio-3d',
+            'code' => 'https://github.com/renard-leo/project--portfolio-3d',
             'imageAlt' => 'Le bureau en 3D du portfolio : ordinateur, écrans, étagères d’objets, lampe et plantes.',
         ],
         [
