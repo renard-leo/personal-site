@@ -16,6 +16,9 @@ AddType text/javascript .js .mjs
     RewriteCond %{THE_REQUEST} \s(/(?:[^?\s]*/)?)((?!contact\.php)[^/?\s]+)\.php[?\s]
     RewriteRule ^ %1%2 [R=301,L]
 
+    # /projets/<slug> -> projet.php (404 si le projet n'existe pas)
+    RewriteRule ^projets/([a-z0-9-]+)/?$ projet.php?slug=$1 [QSA,L]
+
     # /page -> page.php
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d

@@ -15,11 +15,11 @@ $toc = [
     'cookies' => 'Cookies',
 ];
 ?>
-        <article class="legal" aria-labelledby="legal-title">
+        <article class="page legal" aria-labelledby="legal-title">
             <div class="container">
-                <header class="legal-head">
+                <header class="page-head">
                     <p class="eyebrow" aria-hidden="true"><span class="eyebrow-mark">//</span> mentions légales</p>
-                    <h1 class="legal-title" id="legal-title">Mentions légales</h1>
+                    <h1 class="page-title" id="legal-title">Mentions légales</h1>
                 </header>
                 <div class="legal-grid">
                     <nav class="legal-toc" aria-labelledby="legal-toc-title">

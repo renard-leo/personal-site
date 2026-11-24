@@ -6,6 +6,9 @@ declare(strict_types=1);
 return [
     'siteUrl' => 'https://renardleo.fr',
 
+    // Adresse où sont publiés les projets : préfixe des liens relatifs de content('projects') (« solar-system »…).
+    'projectsUrl' => 'https://work.renardleo.fr',
+
     // Affiche ou masque tout ce qui concerne la recherche d'emploi (statut, mode de travail, permis).
     'openToWork' => true,
 

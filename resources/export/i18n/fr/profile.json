@@ -1,0 +1,28 @@
+{
+    "rig": [
+        {
+            "part": "Processeur",
+            "value": "PHP orienté objet et Symfony"
+        },
+        {
+            "part": "Carte graphique",
+            "value": "SCSS, JavaScript et React"
+        },
+        {
+            "part": "Mémoire",
+            "value": "MySQL / MariaDB"
+        },
+        {
+            "part": "Stockage",
+            "value": "Git, historique propre"
+        },
+        {
+            "part": "Refroidissement",
+            "value": "Accessibilité RGAA"
+        },
+        {
+            "part": "Alimentation",
+            "value": "Curiosité (et café)"
+        }
+    ]
+}

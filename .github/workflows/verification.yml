@@ -28,7 +28,7 @@ jobs:
             -   name: Syntaxe PHP
                 run: find config public src templates -name '*.php' -print0 | xargs -0 -n1 php -l > /dev/null
 
-            -   name: Compilation (images, logo, bibliothèques, CSS, JavaScript)
+            -   name: Compilation (images, logo, bibliothèques, CSS, JavaScript) et export du portfolio 3D
                 run: |
                     npm ci
                     npm run build

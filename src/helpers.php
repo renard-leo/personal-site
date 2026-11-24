@@ -8,6 +8,9 @@ const THEME_COLORS = ['light' => '#fbf9f6', 'dark' => '#020a12'];
 const MONTHS_SHORT = [1 => 'janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
 const MONTHS_LONG = [1 => 'janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
 
+// Doit rester aligné sur PROJECT_WIDTHS dans scripts/images.mjs (images de projet en 16:9).
+const PROJECT_IMAGE_WIDTHS = [480, 800, 1200, 1600];
+
 function e(string|int|float|null $value): string
 {
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
@@ -308,4 +311,42 @@ function current_employer(): ?string
     }
 
     return null;
+}
+
+/** Mode du dernier build : 'preprod' montre aussi les projets pas encore en ligne. */
+function build_mode(): string
+{
+    return ($GLOBALS['build']['mode'] ?? 'prod') === 'preprod' ? 'preprod' : 'prod';
+}
+
+/** Projets affichés, dans l'ordre de content.php : en prod, ceux marqués 'prod' => false sont masqués. */
+function projects(): array
+{
+    $projects = content('projects', []);
+    if (build_mode() === 'preprod') {
+        return $projects;
+    }
+
+    return array_values(array_filter($projects, static fn (array $project): bool => $project['prod'] ?? true));
+}
+
+function find_project(string $slug): ?array
+{
+    foreach (projects() as $project) {
+        if ($project['slug'] === $slug) {
+            return $project;
+        }
+    }
+
+    return null;
+}
+
+/** Adresse d'un projet en ligne : une URL absolue est gardée telle quelle, un chemin est ajouté à projectsUrl. */
+function project_url(?string $url): ?string
+{
+    if ($url === null || $url === '' || preg_match('#^https?://#', $url)) {
+        return $url ?: null;
+    }
+
+    return rtrim((string) config('projectsUrl'), '/') . '/' . ltrim($url, '/');
 }

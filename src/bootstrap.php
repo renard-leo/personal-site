@@ -19,6 +19,8 @@ require __DIR__ . '/recaptcha.php';
 
 $content = require __DIR__ . '/content.php';
 $config = require ROOT . '/config/' . (is_file(ROOT . '/config/config.php') ? 'config.php' : 'config.example.php');
+// Écrit par npm run build (prod) ou npm run build:preprod ; absent, le site est en prod.
+$build = is_file(ROOT . '/config/build.php') ? require ROOT . '/config/build.php' : [];
 
 send_security_headers();
 rate_limit_purge();

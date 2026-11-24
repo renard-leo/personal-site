@@ -1,0 +1,10 @@
+// Pages hors accueil : mentions légales, projets, page introuvable.
+.page {padding-block: var(--space-2xl) var(--space-section)}
+
+.page-head {margin-bottom: var(--space-2xl)}
+
+.page-title {font-size: var(--fs-3xl); letter-spacing: var(--ls-display)}
+
+.page-text {max-width: var(--container-prose); color: var(--color-text-muted); font-size: var(--fs-lg)}
+
+.page-actions {display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-xl)}
